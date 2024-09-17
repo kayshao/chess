@@ -27,9 +27,25 @@ public abstract class PieceMovesCalculator {
 
 class KingMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new ArrayList<>();
+        HashSet<ChessMove> moves = new HashSet<>();
+        ChessGame.TeamColor k_color = board.getPiece(myPosition).getTeamColor();
+        int[][] combinations = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
+        int i = myPosition.getRow();
+        int j = myPosition.getColumn();
+        for (int[] combo : combinations) {
+            if (i + combo[0] > 8 | j + combo[1] > 8 | i + combo[0] < 1 | j + combo[1] < 1) break;
+            ChessPosition possiblePos = new ChessPosition(i+combo[0], j+combo[1]);
+            if (board.getPiece(possiblePos) == null) {
+                moves.add(new ChessMove(myPosition, possiblePos, null));
+            }
+            else if (board.getPiece(possiblePos).getTeamColor() != k_color) {
+                moves.add(new ChessMove(myPosition, possiblePos, null));
+            }
+        }
+        return moves;
     }
 }
+
 class QueenMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> moves = new HashSet<>();
@@ -56,6 +72,7 @@ class QueenMovesCalculator extends PieceMovesCalculator {
         return moves;
     }
 }
+
 class BishopMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> moves = new HashSet<>();

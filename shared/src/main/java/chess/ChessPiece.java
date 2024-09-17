@@ -76,6 +76,10 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         PieceType piece = board.getPiece(myPosition).getPieceType();
+        if (piece == PieceType.KING) {
+            KingMovesCalculator king = new KingMovesCalculator();
+            return king.pieceMoves(board, myPosition);
+        }
         if (piece == PieceType.QUEEN) {
             QueenMovesCalculator queen = new QueenMovesCalculator();
             return queen.pieceMoves(board, myPosition);
