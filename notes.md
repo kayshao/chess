@@ -10,3 +10,5 @@ PROJECT STEPS:
 - create new PieceMovesCalculator class with subclasses for each piece, call from piecemoves function
 - create constructors for each
   - then override hash and equal
+
+- make sure that anything stored in the board array is stored at its position-1
