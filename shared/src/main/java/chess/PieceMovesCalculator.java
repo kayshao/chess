@@ -34,7 +34,7 @@ class KingMovesCalculator extends PieceMovesCalculator {
 class BishopMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> moves = new HashSet<>();
-
+        ChessGame.TeamColor b_color =  board.getPiece(myPosition).getTeamColor();       // get team color of Bishop
         int[][] combinations = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
         for (int[] combination : combinations) {
             int k = combination[0];
@@ -46,11 +46,14 @@ class BishopMovesCalculator extends PieceMovesCalculator {
                 if (j == 9 | i == 0 | j == 0) {
                     break; }
                 ChessPosition possiblePos = new ChessPosition(i, j);
-                moves.add(new ChessMove(myPosition, possiblePos, null));
-                    /* if (board.getPiece(possiblePos) == null) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(i, j), null));
-                    }
-                    else break; */
+                if (board.getPiece(possiblePos) == null) {
+                        moves.add(new ChessMove(myPosition, possiblePos, null));
+                }
+                else if (board.getPiece(possiblePos).getTeamColor() != b_color) {
+                    moves.add(new ChessMove(myPosition, possiblePos, null));
+                    break;
+                }
+                else break;
             }
         }
         return moves;

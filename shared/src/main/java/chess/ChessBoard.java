@@ -28,6 +28,13 @@ public class ChessBoard {
         return Arrays.deepHashCode(squares);
     }
 
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "squares=" + Arrays.toString(squares) +
+                '}';
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
