@@ -84,6 +84,10 @@ public class ChessPiece {
             QueenMovesCalculator queen = new QueenMovesCalculator();
             return queen.pieceMoves(board, myPosition);
         }
+        if (piece == PieceType.KNIGHT) {
+            KnightMovesCalculator knight = new KnightMovesCalculator();
+            return knight.pieceMoves(board, myPosition);
+        }
         else if (piece == PieceType.BISHOP) {
             BishopMovesCalculator bishop = new BishopMovesCalculator();
             return bishop.pieceMoves(board, myPosition);

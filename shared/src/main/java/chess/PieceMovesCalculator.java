@@ -73,6 +73,27 @@ class QueenMovesCalculator extends PieceMovesCalculator {
     }
 }
 
+class KnightMovesCalculator extends PieceMovesCalculator {
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> moves = new HashSet<>();
+        ChessGame.TeamColor k_color = board.getPiece(myPosition).getTeamColor();
+        int[][] combinations = {{2, 1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {-1, -2}, {2, -1}, {1, -2}};
+        int i = myPosition.getRow();
+        int j = myPosition.getColumn();
+        for (int[] combo : combinations) {
+            if (i + combo[0] > 8 | j + combo[1] > 8 | i + combo[0] < 1 | j + combo[1] < 1) continue;
+            ChessPosition possiblePos = new ChessPosition(i+combo[0], j+combo[1]);
+            if (board.getPiece(possiblePos) == null) {
+                moves.add(new ChessMove(myPosition, possiblePos, null));
+            }
+            else if (board.getPiece(possiblePos).getTeamColor() != k_color) {
+                moves.add(new ChessMove(myPosition, possiblePos, null));
+            }
+        }
+        return moves;
+    }
+}
+
 class BishopMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> moves = new HashSet<>();
