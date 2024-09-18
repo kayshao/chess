@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -161,4 +160,73 @@ class RookMovesCalculator extends PieceMovesCalculator {
         }
         return moves;
     }
+}
+
+class PawnMovesCalculator extends PieceMovesCalculator {
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> moves = new HashSet<>();
+        ChessGame.TeamColor p_color = board.getPiece(myPosition).getTeamColor();
+        int i = myPosition.getRow();
+        int j = myPosition.getColumn();
+
+        if (p_color == ChessGame.TeamColor.WHITE) {
+            if (i == 2) {
+                int k = 2;
+                ChessPosition possiblePos = new ChessPosition(i+k, j);
+                if(board.getPiece(possiblePos) == null && board.getPiece(new ChessPosition(i+1, j)) == null) {
+                    moves.add(new ChessMove(myPosition, possiblePos, null));
+                }
+            }
+            int k = 1;
+            ChessPosition possiblePos = new ChessPosition(i+k, j);
+            if (board.getPiece(possiblePos) == null) {
+                moves.add(new ChessMove(myPosition, possiblePos, null));
+            }
+            if (j < 8) {
+                ChessPosition possible = new ChessPosition(i+k, j+1);
+                if (board.getPiece(possible) != null) {
+                    if (board.getPiece(possible).getTeamColor() != p_color) {
+                        moves.add(new ChessMove(myPosition, possible, null));
+                    }
+                }
+            }
+            if (j > 1) {
+                ChessPosition possible = new ChessPosition(i+k, j-1);
+                if (board.getPiece(possible) != null) {
+                    if (board.getPiece(possible).getTeamColor() != p_color) {
+                        moves.add(new ChessMove(myPosition, possible, null));
+                    }
+                }
+            }
+        }
+        else {
+            if (i == 7) {
+                int k = -2;
+                ChessPosition possiblePos = new ChessPosition(i+k, j);
+                if(board.getPiece(possiblePos) == null && board.getPiece(new ChessPosition(i-1, j)) == null) {
+                    moves.add(new ChessMove(myPosition, possiblePos, null));
+                }
+            }
+            ChessPosition possiblePos = new ChessPosition(i-1, j);
+            if (board.getPiece(possiblePos) == null) {
+                moves.add(new ChessMove(myPosition, possiblePos, null));
+            }
+            if (j < 8) {
+                ChessPosition possible = new ChessPosition(i-1, j+1);
+                if (board.getPiece(possible) != null) {
+                    if (board.getPiece(possible).getTeamColor() != p_color) {
+                        moves.add(new ChessMove(myPosition, possible, null));
+                    }
+                }
+            }
+            if (j > 1) {
+                ChessPosition possible = new ChessPosition(i-1, j-1);
+                if (board.getPiece(possible) != null) {
+                    if (board.getPiece(possible).getTeamColor() != p_color) {
+                        moves.add(new ChessMove(myPosition, possible, null));
+                    }
+                }
+            }
+        }
+    return moves;}
 }

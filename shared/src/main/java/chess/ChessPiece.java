@@ -96,6 +96,10 @@ public class ChessPiece {
             RookMovesCalculator rook = new RookMovesCalculator();
             return rook.pieceMoves(board, myPosition);
         }
+        else if (piece == PieceType.PAWN) {
+            PawnMovesCalculator pawn = new PawnMovesCalculator();
+            return pawn.pieceMoves(board, myPosition);
+        }
         else return null;
     }
 }
