@@ -38,7 +38,8 @@ public class ChessMove {
     @Override
     public String toString() {
         return "[" + getStartPosition().getRow() + getStartPosition().getColumn() +
-        ":" + getEndPosition().getRow() + getEndPosition().getColumn() + "]";
+        ":" + getEndPosition().getRow() + getEndPosition().getColumn() + "]" +
+                "p:" + promotionPiece;
     }
 
     /**
@@ -62,6 +63,6 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        throw new RuntimeException("Not implemented");
+        return ChessPiece.PieceType.valueOf(promotionPiece.name());
     }
 }
