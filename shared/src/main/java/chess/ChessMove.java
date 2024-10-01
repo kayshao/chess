@@ -18,6 +18,27 @@ public class ChessMove {
         this.start = startPosition;
         this.end = endPosition;
         this.promotion = promotionPiece;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessMove chessMove = (ChessMove) o;
+        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startPosition, endPosition, promotionPiece);
+    }
+
+    @Override
+    public String toString() {
+        return "[" + getStartPosition().getRow() + getStartPosition().getColumn() +
+        ":" + getEndPosition().getRow() + getEndPosition().getColumn() + "]" +
+                "p:" + promotionPiece;
     }
 
     /**
@@ -41,30 +62,6 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        if (end.getRow() == 8) {
-            return ChessPiece.PieceType.KNIGHT;
-        }
-        else return null;
-    }
-
-    @Override
-    public String toString() {
-        return "[" + start +
-                ":" + end +
-                //" p=" + promotion +
-                ']';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(start, chessMove.start) && Objects.equals(end, chessMove.end) && promotion == chessMove.promotion;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(start, end, promotion);
+        return null;
     }
 }

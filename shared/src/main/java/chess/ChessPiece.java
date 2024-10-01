@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -18,6 +19,26 @@ public class ChessPiece {
         this.type = type;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
     /**
      * The various different chess piece options
      */
@@ -43,7 +64,6 @@ public class ChessPiece {
     public PieceType getPieceType() {
         return type;
     }
-
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -52,57 +72,31 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        // create directions for each piece
-        int[][] k_q_directions = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
-        int[][] kn_directions = {{1, 2}, {2, 1}, {2, -1}, {1, -2}, {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}};
-        int[][] b_directions = {{1,1}, {1, -1}, {-1, -1}, {-1, 1}};
-        int[][] r_directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-        int[][] p_directions = {{1,0}, {-1,0}};
-
-        if (type == PieceType.KING) {
+        PieceType piece = board.getPiece(myPosition).getPieceType();
+        if (piece == PieceType.KING) {
             KingMovesCalculator king = new KingMovesCalculator();
-            return king.kingMoves(board, myPosition, k_q_directions);
+            return king.pieceMoves(board, myPosition);
         }
-        else if (type == PieceType.QUEEN) {
+        if (piece == PieceType.QUEEN) {
             QueenMovesCalculator queen = new QueenMovesCalculator();
-            return queen.queenMoves(board, myPosition, k_q_directions);
+            return queen.pieceMoves(board, myPosition);
         }
-        else if (type == PieceType.KNIGHT) {
+        if (piece == PieceType.KNIGHT) {
             KnightMovesCalculator knight = new KnightMovesCalculator();
-            return knight.knightMoves(board, myPosition, kn_directions);
+            return knight.pieceMoves(board, myPosition);
         }
-        else if (type == PieceType.BISHOP) {
+        else if (piece == PieceType.BISHOP) {
             BishopMovesCalculator bishop = new BishopMovesCalculator();
-            return bishop.bishopMoves(board, myPosition, b_directions);
+            return bishop.pieceMoves(board, myPosition);
         }
-        else if (type == PieceType.ROOK) {
+        else if (piece == PieceType.ROOK) {
             RookMovesCalculator rook = new RookMovesCalculator();
-            return rook.rookMoves(board, myPosition, r_directions);
+            return rook.pieceMoves(board, myPosition);
         }
-        else {
+        else if (piece == PieceType.PAWN) {
             PawnMovesCalculator pawn = new PawnMovesCalculator();
-            return pawn.pawnMoves(board, myPosition, p_directions);
+            return pawn.pieceMoves(board, myPosition);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessPiece that = (ChessPiece) o;
-        return color == that.color && type == that.type;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(color, type);
-    }
-
-    @Override
-    public String toString() {
-        return "ChessPiece{" +
-                "color=" + color +
-                ", type=" + type +
-                '}';
+        else return null;
     }
 }

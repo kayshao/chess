@@ -10,10 +10,56 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    public ChessPiece[][] board = new ChessPiece[8][8];
+    private final ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(squares, that.squares);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(squares);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("  1 2 3 4 5 6 7 8\n");
+
+        for (int row = 7; row >= 0; row--) {
+            sb.append(row + 1).append(" ");
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = squares[row][col];
+                if (piece == null) {
+                    sb.append(((row + col) % 2 == 0) ? "□ " : "■ ");
+                } else {
+                    sb.append(pieceToChar(piece)).append(" ");
+                }
+            }
+            sb.append(row + 1).append("\n");
+        }
+
+        sb.append("  1 2 3 4 5 6 7 8");
+        return sb.toString();
+    }
+
+    private char pieceToChar(ChessPiece piece) {
+        char c = switch (piece.getPieceType()) {
+            case KING -> 'K';
+            case QUEEN -> 'Q';
+            case ROOK -> 'R';
+            case BISHOP -> 'B';
+            case KNIGHT -> 'N';
+            case PAWN -> 'P';
+        };
+        return piece.getTeamColor() == ChessGame.TeamColor.WHITE ? c : Character.toLowerCase(c);
     }
 
     /**
@@ -23,7 +69,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow() - 1][position.getColumn() - 1] = piece;
+        squares[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
     /**
@@ -34,7 +80,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow() - 1][position.getColumn() - 1];
+        return squares[position.getRow()-1][position.getColumn()-1];
     }
 
     /**
@@ -62,25 +108,5 @@ public class ChessBoard {
         addPiece(new ChessPosition(8, 6), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
         addPiece(new ChessPosition(8, 7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(8, 8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessBoard that = (ChessBoard) o;
-        return Objects.deepEquals(board, that.board);
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.deepHashCode(board);
-    }
-
-    @Override
-    public String toString() {
-        return "ChessBoard{" +
-                "board=" + Arrays.toString(board) +
-                '}';
     }
 }
