@@ -111,9 +111,7 @@ class PawnMovesCalculator extends PieceMovesCalculator {
         ChessGame.TeamColor color = board.getPiece(start).getTeamColor();
         int i = start.getRow();
         int j = start.getColumn();
-        int[] d = new int[2];
         if (color == ChessGame.TeamColor.BLACK) {
-            d = directions[1];
             ChessPosition possibleEnd = new ChessPosition(i - 1, j);
             if (board.getPiece(possibleEnd) == null) {
                 if (i == 2) {
@@ -163,7 +161,6 @@ class PawnMovesCalculator extends PieceMovesCalculator {
             }
         }
         else {
-            d = directions[0];
             ChessPosition possible = new ChessPosition(i + 1, j);
             if (board.getPiece(possible) == null) {
                 if (i == 7) {
