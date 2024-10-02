@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 
+
 /**
  * For a class that can manage a chess game, making moves on a board
  * <p>
@@ -9,17 +10,18 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private final TeamColor color;
+    public ChessBoard board = new ChessBoard();
 
-    public ChessGame(TeamColor color) {
-        this.color = color;
+    public ChessGame() {
+        board.resetBoard();
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+
+        return TeamColor.WHITE;
     }
 
     /**
@@ -106,6 +108,5 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
-    }
+        return board;}
 }

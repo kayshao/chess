@@ -26,19 +26,19 @@ public class ChessMove {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
+        return Objects.equals(start, chessMove.start) && Objects.equals(end, chessMove.end) && promotion == chessMove.promotion;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startPosition, endPosition, promotionPiece);
+        return Objects.hash(start, end, promotion);
     }
 
     @Override
     public String toString() {
         return "[" + getStartPosition().getRow() + getStartPosition().getColumn() +
         ":" + getEndPosition().getRow() + getEndPosition().getColumn() + "]" +
-                "p:" + promotionPiece;
+                "p:" + promotion;
     }
 
     /**
