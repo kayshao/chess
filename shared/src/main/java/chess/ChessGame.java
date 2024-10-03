@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -69,7 +71,23 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        TeamColor otherTeam = TeamColor.BLACK;
+        if (teamColor == TeamColor.BLACK) {otherTeam = TeamColor.WHITE;}
+
+        ChessPosition kingPos = getKing(teamColor);
+        Collection<ChessPosition> piecePositions = getPiecePositions(otherTeam);
+        for (ChessPosition piecePosition : piecePositions) {
+            Collection<ChessMove> moves = ChessPiece.pieceMoves(board, piecePosition);
+            if (moves != null) {
+                for (ChessMove move : moves) {
+                    ChessPosition pos = move.getEndPosition();
+                    if (pos.equals(kingPos)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -99,7 +117,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -109,4 +127,44 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;}
+
+    /**
+     * Gets the positions of all pieces of one color
+     *
+     * @param color which team to get positions of
+     * @return collection of ChessPositions
+     */
+    private Collection<ChessPosition>getPiecePositions(TeamColor color) {
+        List<ChessPosition> piecePositions = new ArrayList<>();
+        for(int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                if (board.squares[i][j] != null) {
+                    if (board.squares[i][j].getTeamColor() == color) {
+                        piecePositions.add(new ChessPosition(i+1, j+1));
+                    }
+                }
+            }
+        }
+        return piecePositions;
+    }
+
+    /**
+     * Gets the position of one team's king
+     *
+     * @param color which team to get king's position
+     * @return position of king
+     */
+    private ChessPosition getKing(TeamColor color) {
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                ChessPiece position = board.squares[i][j];
+                if (position != null) {
+                    if (position.getTeamColor() == color && position.getPieceType() == ChessPiece.PieceType.KING) {
+                        return new ChessPosition(i+1, j+1);
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }
