@@ -80,7 +80,11 @@ public class ChessGame {
         if (board.getPiece(move.getStartPosition()) == null) {
             throw new InvalidMoveException();
         }
-        if (!validMoves(move.getStartPosition()).contains(move) | turn != board.getPiece(move.getStartPosition()).getTeamColor()) {
+        else if (move.getPromotionPiece() != null) {
+            board.movePiece(move.getStartPosition(), move.getEndPosition());
+            board.addPiece(move.getEndPosition(), new ChessPiece(board.getPiece(move.getEndPosition()).getTeamColor(), move.getPromotionPiece()));
+        }
+        else if (!validMoves(move.getStartPosition()).contains(move) | turn != board.getPiece(move.getStartPosition()).getTeamColor()) {
             throw new InvalidMoveException();
         }
         else {
