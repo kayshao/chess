@@ -1,7 +1,6 @@
 package chess;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -69,7 +68,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow()-1][position.getColumn()-1] = piece;
+        squares[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -80,7 +79,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[position.getRow()-1][position.getColumn()-1];
+        return squares[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
@@ -108,5 +107,79 @@ public class ChessBoard {
         addPiece(new ChessPosition(8, 6), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
         addPiece(new ChessPosition(8, 7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(8, 8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+    }
+
+    public ChessBoard copyBoard() {
+        ChessBoard boardCopy = new ChessBoard();
+        for (int i = 0; i < 8; i++) {
+            System.arraycopy(squares[i], 0, boardCopy.squares[i], 0, 8);
+        }
+        return boardCopy;
+    }
+
+    public void movePiece(ChessPosition startPosition, ChessPosition endPosition) {
+        ChessPiece piece = this.getPiece(startPosition);
+        this.addPiece(endPosition, piece);
+        this.addPiece(startPosition, null);
+    }
+
+    public boolean boardIsInCheck(ChessGame.TeamColor teamColor) {
+        ChessGame.TeamColor otherTeam = ChessGame.TeamColor.BLACK;
+        if (teamColor == ChessGame.TeamColor.BLACK) {otherTeam = ChessGame.TeamColor.WHITE;}
+
+        ChessPosition kingPos = getKing(teamColor);
+        Collection<ChessPosition> piecePositions = getPiecePositions(otherTeam);
+        for (ChessPosition piecePosition : piecePositions) {
+            Collection<ChessMove> moves = ChessPiece.pieceMoves(this, piecePosition);
+            if (moves != null) {
+                for (ChessMove move : moves) {
+                    ChessPosition pos = move.getEndPosition();
+                    if (pos.equals(kingPos)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets the positions of all pieces of one color
+     *
+     * @param color which team to get positions of
+     * @return collection of ChessPositions
+     */
+    private Collection<ChessPosition>getPiecePositions(ChessGame.TeamColor color) {
+        List<ChessPosition> piecePositions = new ArrayList<>();
+        for(int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                if (this.squares[i][j] != null) {
+                    if (this.squares[i][j].getTeamColor() == color) {
+                        piecePositions.add(new ChessPosition(i+1, j+1));
+                    }
+                }
+            }
+        }
+        return piecePositions;
+    }
+
+    /**
+     * Gets the position of one team's king
+     *
+     * @param color which team to get king's position
+     * @return position of king
+     */
+    private ChessPosition getKing(ChessGame.TeamColor color) {
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                ChessPiece position = this.squares[i][j];
+                if (position != null) {
+                    if (position.getTeamColor() == color && position.getPieceType() == ChessPiece.PieceType.KING) {
+                        return new ChessPosition(i+1, j+1);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
