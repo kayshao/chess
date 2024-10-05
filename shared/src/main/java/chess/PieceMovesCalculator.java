@@ -51,7 +51,7 @@ class KingMovesCalculator extends PieceMovesCalculator {
         for (int[] d : directions) {
             int i = start.getRow();
             int j = start.getColumn();
-            if (i < 8 && i > 1 && j < 8 && j > 1) {
+            if (i + d[0] < 9 && i + d[0] > 0 && j + d[1] < 9 && j + d[1] > 0) {
                 i += d[0];
                 j += d[1];
 

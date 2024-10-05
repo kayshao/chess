@@ -149,7 +149,7 @@ public class ChessBoard {
      * @param color which team to get positions of
      * @return collection of ChessPositions
      */
-    private Collection<ChessPosition>getPiecePositions(ChessGame.TeamColor color) {
+    public Collection<ChessPosition>getPiecePositions(ChessGame.TeamColor color) {
         List<ChessPosition> piecePositions = new ArrayList<>();
         for(int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {

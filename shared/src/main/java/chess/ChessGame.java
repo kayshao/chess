@@ -10,18 +10,19 @@ import java.util.*;
  * signature of the existing methods.
  */
 public class ChessGame {
+    private TeamColor turn;
     public ChessBoard board = new ChessBoard();
 
     public ChessGame() {
         board.resetBoard();
+        this.turn = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-
-        return TeamColor.WHITE;
+        return turn;
     }
 
     /**
@@ -30,7 +31,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        this.turn = team;
     }
 
     /**
@@ -97,7 +98,18 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+        else {
+            Collection<ChessPosition> piecePositions = board.getPiecePositions(teamColor);
+            for (ChessPosition position : piecePositions) {
+                if (!validMoves(position).isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     /**
