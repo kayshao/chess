@@ -14,10 +14,11 @@ public class MemoryAuthDataAccess implements AuthDataAccess {
         return authToken_authData.get(authToken);
     }
 
-    public void createAuth(String username) {
+    public String createAuth(String username) {
         String token = UUID.randomUUID().toString();
         AuthData auth = new AuthData(username, token);
         authToken_authData.put(token, auth);
+        return token;
     }
 
     public void deleteAuth(String token) {

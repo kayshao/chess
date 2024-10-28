@@ -1,5 +1,11 @@
 package server;
 
+import dataaccess.MemoryAuthDataAccess;
+import dataaccess.MemoryGameDataAccess;
+import dataaccess.MemoryUserDataAccess;
+import handler.Handler;
+import service.GameService;
+import service.UserService;
 import spark.*;
 
 public class Server {
@@ -10,12 +16,19 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.post("/user", this::register);
-        Spark.delete("/db", this::clear);
-        Spark.post("/session", this::login);
-        Spark.delete("/session", this::logout);
-        Spark.get("/game", this::listGames);
-        Spark.post("/game", this::createGame);
+        MemoryAuthDataAccess auth = new MemoryAuthDataAccess();
+        MemoryUserDataAccess user = new MemoryUserDataAccess();
+        MemoryGameDataAccess game = new MemoryGameDataAccess();
+        UserService userService = new UserService(auth, user);
+        GameService gameService = new GameService(auth, game);
+        Handler handler = new Handler(userService, gameService);
+
+        Spark.post("/user", handler::handleRegister);
+        Spark.delete("/db", handler::handleClear);
+        Spark.post("/session", handler::handleLogin);
+        Spark.delete("/session", handler::handleLogout);
+        Spark.get("/game", handler::handleListGames);
+        Spark.post("/game", handler::handleCreateGame);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         // Spark.init();
@@ -38,7 +51,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object register(Request req, Response res) {
+    /*private Object register(Request req, Response res) {
         return null;
     }
 
@@ -59,4 +72,6 @@ public class Server {
     private Object createGame(Request req, Response res) {
         return "creating game";
     }
+
+     */
 }

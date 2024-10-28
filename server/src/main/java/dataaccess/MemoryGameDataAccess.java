@@ -19,10 +19,8 @@ public class MemoryGameDataAccess implements GameDataAccess{
         return games.get(id);
     }
 
-    @Override
-    public List<GameData> listGames() {
-        List<GameData> gameList = new ArrayList<>(games.values());;
-        return gameList;
+    public HashMap<Integer, GameData> listGames() {
+        return games;
     }
 
     public int createGame(String name) {

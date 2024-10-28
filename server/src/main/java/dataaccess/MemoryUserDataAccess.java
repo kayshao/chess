@@ -11,7 +11,7 @@ public class MemoryUserDataAccess {
         users.clear();
     }
 
-    UserData getUser(String username) {
+    public UserData getUser(String username) {
         return users.get(username);
     }
 
