@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.MemoryAuthDataAccess;
 import dataaccess.MemoryUserDataAccess;
+import exception.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import request.ClearRequest;
@@ -21,41 +22,66 @@ class UserServiceTest {
     @BeforeEach
     void init() {
         this.userService = new UserService(new MemoryAuthDataAccess(), new MemoryUserDataAccess());
-        userService.register(new RegisterRequest("myUsername", "myPassword", "my@email.com"));
+        try {
+            userService.register(new RegisterRequest("myUsername", "myPassword", "my@email.com"));
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void register_positive() {
+    void registerPositive() {
         RegisterRequest request = new RegisterRequest("aNewUsername", "myPassword", "mail@email.com");
-        RegisterResult result = userService.register(request);
-
-        assertNotNull(result.token());
-        assertEquals("aNewUsername", result.username());
+        try {
+            RegisterResult result = userService.register(request);
+            assertNotNull(result.token());
+            assertEquals("aNewUsername", result.username());
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void register_negative() {
+    void registerNegative() {
         RegisterRequest request = new RegisterRequest("myUsername", "myPassword", "my@email.com");
-        RegisterResult result = userService.register(request);
+        assertThrows(ServiceException.class, () -> userService.register(request));
+        }
+
+    @Test
+    void loginPositive() {
+        LoginRequest request = new LoginRequest("myUsername", "myPassword");
+        try {
+            LoginResult result = userService.login(request);
+            assertNotNull(result.authToken());
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void login_positive() {
-        LoginRequest request = new LoginRequest("myUsername", "myPassword");
-        LoginResult result = userService.login(request);
-
-        assertNotNull(result.authToken());
+    void loginNegative() {
+        LoginRequest request = new LoginRequest("chicken", "chicken");
+        assertThrows(ServiceException.class, () -> userService.login(request));
     }
 
     @Test
-    void logout() {
+    void logoutPositive() {
         LoginRequest request = new LoginRequest("myUsername", "myPassword");
-        LoginResult result = userService.login(request);
-        LogoutRequest logoutRequest = new LogoutRequest(result.authToken());
-        LogoutResult logoutResult = userService.logout(logoutRequest);
+        try {
+            LoginResult result = userService.login(request);
+            LogoutRequest logoutRequest = new LogoutRequest(result.authToken());
+            LogoutResult logoutResult = userService.logout(logoutRequest);
+            assertNotNull(logoutResult);
+            assertEquals("", logoutResult.result());
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        assertNotNull(logoutResult);
-        assertEquals("", logoutResult.result());
+    @Test
+    void logoutNegative() {
+        LogoutRequest logoutRequest = new LogoutRequest("fakeToken");
+        assertThrows(ServiceException.class, () -> userService.logout(logoutRequest));
     }
 
     @Test
