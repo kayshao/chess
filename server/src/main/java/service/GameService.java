@@ -38,7 +38,7 @@ public class GameService {
             GameData game = gameDAO.getGame(request.gameID());
             gameDAO.setUsername(request.color(), auth, request.gameID());
         }
-        return new JoinGameResult();
+        return new JoinGameResult("");
     }
 
     public ListGamesResult listGames(ListGamesRequest request) {
@@ -51,6 +51,6 @@ public class GameService {
 
     public ClearResult clear(ClearRequest request) {
         gameDAO.clear();
-        return new ClearResult();
+        return new ClearResult("");
     }
 }

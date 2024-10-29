@@ -37,11 +37,11 @@ public class UserService {
     public LogoutResult logout(LogoutRequest request) {
         String token = authDAO.getAuth(request.token()).authToken();
         authDAO.deleteAuth(token);
-        return new LogoutResult();
+        return new LogoutResult("");
     }
     public ClearResult clear(ClearRequest request) {
         authDAO.clear();
         userDAO.clear();
-        return new ClearResult();
+        return new ClearResult("");
     }
 }
