@@ -20,9 +20,9 @@ class GameServiceTest {
         MemoryAuthDataAccess authDAO = new MemoryAuthDataAccess();
         this.gameService = new GameService(authDAO, new MemoryGameDataAccess());
         UserService userService = new UserService(authDAO, new MemoryUserDataAccess());
-        userService.register(new RegisterRequest("myUser", "myPass", "my@mail.com"));
-        LoginResult loginResult = userService.login(new LoginRequest("myUser", "myPass"));
-        this.authToken = loginResult.authToken();
+        // userService.register(new RegisterRequest("myUser", "myPass", "my@mail.com"));
+        // LoginResult loginResult = userService.login(new LoginRequest("myUser", "myPass"));
+        // this.authToken = loginResult.authToken();
         CreateGameResult createResult = gameService.createGame(new CreateGameRequest(authToken, "myGame"));
     }
 

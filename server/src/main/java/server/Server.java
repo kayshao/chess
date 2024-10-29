@@ -7,6 +7,7 @@ import handler.Handler;
 import service.GameService;
 import service.UserService;
 import spark.*;
+import exception.ResponseException;
 
 public class Server {
 
@@ -29,6 +30,7 @@ public class Server {
         Spark.delete("/session", handler::handleLogout);
         Spark.get("/game", handler::handleListGames);
         Spark.post("/game", handler::handleCreateGame);
+        // Spark.exception(ResponseException.class, handler::handleException);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         // Spark.init();
