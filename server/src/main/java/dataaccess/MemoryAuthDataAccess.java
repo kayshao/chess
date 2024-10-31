@@ -16,7 +16,7 @@ public class MemoryAuthDataAccess implements AuthDataAccess {
 
     public String createAuth(String username) {
         String token = UUID.randomUUID().toString();
-        AuthData auth = new AuthData(username, token);
+        AuthData auth = new AuthData(token, username);
         authToken_authData.put(token, auth);
         return token;
     }

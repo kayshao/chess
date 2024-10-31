@@ -18,9 +18,9 @@ public class Handler {
         this.userService = userService;
         this.gameService = gameService;
     }
-    private void exceptionHandler(ResponseException ex, Request req, Response res) {
+    /* private void exceptionHandler(ResponseException ex, Request req, Response res) {
         res.status(ex.StatusCode());
-    }
+    } */
 
     public Object handleRegister(Request req, Response res) throws ResponseException {
         try {
@@ -46,32 +46,51 @@ public class Handler {
         try {
             LogoutRequest request = new Gson().fromJson(req.body(), LogoutRequest.class);
             userService.logout(request);
-            return "{}";
+            return new Gson().toJson("{}");
         } catch (ServiceException e) {
             res.status(401);
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
     }
     public Object handleCreateGame(Request req, Response res) { //throws ResponseException {
-        CreateGameRequest request = new Gson().fromJson(req.body(), CreateGameRequest.class);
-        // String authToken = request.token();
-        CreateGameResult result = gameService.createGame(request);
-        return new Gson().toJson(result);
+        try {
+            CreateGameRequest request = new Gson().fromJson(req.body(), CreateGameRequest.class);
+            // String authToken = request.token();
+            CreateGameResult result = gameService.createGame(request);
+            return new Gson().toJson(result);
+        } catch (ServiceException e) {
+            res.status(401);
+            return new Gson().toJson(new ErrorResponse(e.getMessage()));
+        }
     }
     public Object handleListGames(Request req, Response res) { //throws ResponseException {
-        ListGamesRequest request = new Gson().fromJson(req.body(), ListGamesRequest.class);
-        ListGamesResult result = gameService.listGames(request);
-        return new Gson().toJson(result);
+        try {
+            ListGamesRequest request = new Gson().fromJson(req.body(), ListGamesRequest.class);
+            ListGamesResult result = gameService.listGames(request);
+            return new Gson().toJson(result);
+        } catch (ServiceException e) {
+            res.status(401);
+            return new Gson().toJson(new ErrorResponse(e.getMessage()));
+        }
     }
     public Object handleJoinGame(Request req, Response res) { //throws ResponseException {
-        JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
-        JoinGameResult result = gameService.joinGame(request);
-        return new Gson().toJson(result);
+        try {
+            JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
+            JoinGameResult result = gameService.joinGame(request);
+            return new Gson().toJson(result);
+        } catch (ServiceException e) {
+            res.status(401);
+            return new Gson().toJson(new ErrorResponse(e.getMessage()));
+        }
     }
     public Object handleClear(Request req, Response res) { //throws ResponseException {
         ClearRequest request = new Gson().fromJson(req.body(), ClearRequest.class);
         ClearResult result = gameService.clear(request);
         userService.clear(request);
         return new Gson().toJson(result);
+    }
+    //TODO: implement dictionary that reads status and returns int
+    private int getStatus(String message) {
+        return 401;
     }
 }

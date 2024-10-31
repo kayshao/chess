@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MemoryGameDataAccess implements GameDataAccess{
-    private int gameID = 0;
+    private int gameID = 1;
     private final HashMap<Integer, GameData> games = new HashMap<>();
 
     public void clear() {
@@ -19,8 +19,11 @@ public class MemoryGameDataAccess implements GameDataAccess{
         return games.get(id);
     }
 
-    public HashMap<Integer, GameData> listGames() {
-        return games;
+    public List<GameData> listGames() {
+        if (games.isEmpty()) {return null;}
+        else {
+            return new ArrayList<>(games.values());
+        }
     }
 
     public int createGame(String name) {

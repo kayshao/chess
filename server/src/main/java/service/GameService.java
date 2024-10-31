@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.MemoryAuthDataAccess;
 import dataaccess.MemoryGameDataAccess;
+import exception.ServiceException;
 import model.AuthData;
 import model.GameData;
 import request.ClearRequest;
@@ -12,8 +13,7 @@ import result.ClearResult;
 import result.CreateGameResult;
 import result.JoinGameResult;
 import result.ListGamesResult;
-
-import java.util.HashMap;
+import java.util.List;
 
 public class GameService {
     private final MemoryAuthDataAccess authDAO;
@@ -24,29 +24,41 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public CreateGameResult createGame(CreateGameRequest request) {
-        if (authDAO.getAuth(request.token()) != null) {
+    public CreateGameResult createGame(CreateGameRequest request) throws ServiceException {
+        if (authDAO.getAuth(request.token()) == null) {
+            throw new ServiceException("Error: Unauthorized");
+        }
+        else {
         int id = gameDAO.createGame(request.name());
         return new CreateGameResult(id);
         }
-        else return null;
     }
 
-    public JoinGameResult joinGame(JoinGameRequest request) {
-        AuthData auth = authDAO.getAuth(request.token());
-        if (auth.username() != null) {
-            GameData game = gameDAO.getGame(request.gameID());
-            gameDAO.setUsername(request.color(), auth, request.gameID());
+    public JoinGameResult joinGame(JoinGameRequest request) throws ServiceException {
+        if (authDAO.getAuth(request.token()) == null) {
+            throw new ServiceException("Error: Unauthorized");
+        } else {
+            AuthData auth = authDAO.getAuth(request.token());
+            if (auth.username() != null) {
+                if (gameDAO.getGame(request.gameID()) == null) {
+                    throw new ServiceException("Error: bad request");
+                } else if ((request.color().equals("black") && gameDAO.getGame(request.gameID()).blackUsername() != null) | (request.color().equals("white") && gameDAO.getGame(request.gameID()).whiteUsername() != null)) {
+                    throw new ServiceException("Error: Already Taken");
+                } else {
+                    gameDAO.setUsername(request.color(), auth, request.gameID());
+                }
+            }
+            return new JoinGameResult("");
         }
-        return new JoinGameResult("");
     }
 
-    public ListGamesResult listGames(ListGamesRequest request) {
-        if (authDAO.getAuth(request.token()) != null) {
-            HashMap<Integer, GameData> games = gameDAO.listGames();
+    public ListGamesResult listGames(ListGamesRequest request) throws ServiceException {
+        if (authDAO.getAuth(request.token()) == null) {
+            throw new ServiceException("Error: Unauthorized");
+        } else {
+            List<GameData> games = gameDAO.listGames();
             return new ListGamesResult(games);
         }
-        return null;
     }
 
     public ClearResult clear(ClearRequest request) {
