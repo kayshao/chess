@@ -29,6 +29,28 @@ public abstract class PieceMovesCalculator {
         }
         return moves;
     }
+    public HashSet<ChessMove> knightKingMoves(ChessBoard board, ChessPosition start, int[][]directions) {
+        HashSet<ChessMove> moves = new HashSet<>();
+        ChessGame.TeamColor color = board.getPiece(start).getTeamColor();
+
+        for (int[] d : directions) {
+            int i = start.getRow();
+            int j = start.getColumn();
+            if (i + d[0] < 9 && i + d[0] > 0 && j + d[1] < 9 && j + d[1] > 0) {
+                i += d[0];
+                j += d[1];
+
+                ChessPosition possibleEnd = new ChessPosition(i, j);
+                if (board.getPiece(possibleEnd) == null) {
+                    moves.add(new ChessMove(start, possibleEnd, null));
+                }
+                else if (board.getPiece(possibleEnd).getTeamColor() != color) {
+                    moves.add(new ChessMove(start, possibleEnd, null));
+                }
+            }
+        }
+        return moves;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -45,26 +67,7 @@ public abstract class PieceMovesCalculator {
 }
 class KingMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition start, int[][] directions) {
-        HashSet<ChessMove> moves = new HashSet<>();
-        ChessGame.TeamColor color = board.getPiece(start).getTeamColor();
-
-        for (int[] d : directions) {
-            int i = start.getRow();
-            int j = start.getColumn();
-            if (i + d[0] < 9 && i + d[0] > 0 && j + d[1] < 9 && j + d[1] > 0) {
-                i += d[0];
-                j += d[1];
-
-                ChessPosition possibleEnd = new ChessPosition(i, j);
-                if (board.getPiece(possibleEnd) == null) {
-                    moves.add(new ChessMove(start, possibleEnd, null));
-                }
-                else if (board.getPiece(possibleEnd).getTeamColor() != color) {
-                    moves.add(new ChessMove(start, possibleEnd, null));
-                }
-            }
-        }
-        return moves;
+        return knightKingMoves(board, start, directions);
     }
 }
 class QueenMovesCalculator extends PieceMovesCalculator {
@@ -74,25 +77,7 @@ class QueenMovesCalculator extends PieceMovesCalculator {
 }
 class KnightMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition start, int[][] directions) {
-        HashSet<ChessMove> moves = new HashSet<>();
-        ChessGame.TeamColor color = board.getPiece(start).getTeamColor();
-
-        for (int[] d : directions) {
-            int i = start.getRow();
-            int j = start.getColumn();
-            if (i + d[0] < 9 && i + d[0] > 0 && j + d[1] < 9 && j + d[1] > 0) {
-                i += d[0];
-                j += d[1];
-                ChessPosition possibleEnd = new ChessPosition(i, j);
-                if (board.getPiece(possibleEnd) == null) {
-                    moves.add(new ChessMove(start, possibleEnd, null));
-                }
-                else if (board.getPiece(possibleEnd).getTeamColor() != color) {
-                    moves.add(new ChessMove(start, possibleEnd, null));
-                }
-            }
-        }
-        return moves;
+        return knightKingMoves(board, start, directions);
     }
 }
 class BishopMovesCalculator extends PieceMovesCalculator {

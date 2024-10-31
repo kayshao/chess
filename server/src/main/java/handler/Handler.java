@@ -15,14 +15,14 @@ import java.util.Map;
 public class Handler {
     private final UserService userService;
     private final GameService gameService;
-    private static final Map<String, Integer> statusCodes = new HashMap<>();
+    private static final Map<String, Integer> STATUS_CODES = new HashMap<>();
 
 
         static {
-            statusCodes.put("Error: unauthorized", 401);
-            statusCodes.put("Error: bad request", 400);
-            statusCodes.put("Error: already taken", 403);
-            statusCodes.put("Error: description", 500);
+            STATUS_CODES.put("Error: unauthorized", 401);
+            STATUS_CODES.put("Error: bad request", 400);
+            STATUS_CODES.put("Error: already taken", 403);
+            STATUS_CODES.put("Error: description", 500);
         }
 
     public Handler(UserService userService, GameService gameService) {
@@ -107,10 +107,10 @@ public class Handler {
         return new Gson().toJson(result);
     }
     private int getStatus(String message) {
-        if (statusCodes.get(message) == null) {
+        if (STATUS_CODES.get(message) == null) {
             return 500;
         } else {
-            return statusCodes.get(message);
+            return STATUS_CODES.get(message);
         }
     }
 }

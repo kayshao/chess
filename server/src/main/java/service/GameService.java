@@ -44,7 +44,10 @@ public class GameService {
             if (auth.username() != null) {
                 if (gameDAO.getGame(request.gameID()) == null) {
                     throw new ServiceException("Error: bad request");
-                } else if ((request.color().equals("BLACK") && gameDAO.getGame(request.gameID()).blackUsername() != null) | (request.color().equals("WHITE") && gameDAO.getGame(request.gameID()).whiteUsername() != null)) {
+                } else if ((request.color().equals("BLACK")
+                        && gameDAO.getGame(request.gameID()).blackUsername() != null)
+                        | (request.color().equals("WHITE")
+                        && gameDAO.getGame(request.gameID()).whiteUsername() != null)) {
                     throw new ServiceException("Error: already taken");
                 } else {
                     gameDAO.setUsername(request.color(), auth, request.gameID());

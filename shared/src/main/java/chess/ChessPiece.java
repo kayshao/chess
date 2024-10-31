@@ -73,34 +73,34 @@ public class ChessPiece {
     public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         PieceType piece = board.getPiece(myPosition).getPieceType();
         if (piece == PieceType.KING) {
-            int[][] k_q_directions = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
+            int[][] kDirections = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
             KingMovesCalculator king = new KingMovesCalculator();
-            return king.kingMoves(board, myPosition, k_q_directions);
+            return king.kingMoves(board, myPosition, kDirections);
         }
         if (piece == PieceType.QUEEN) {
-            int[][] k_q_directions = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
+            int[][] qDirections = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
             QueenMovesCalculator queen = new QueenMovesCalculator();
-            return queen.queenMoves(board, myPosition, k_q_directions);
+            return queen.queenMoves(board, myPosition, qDirections);
         }
         if (piece == PieceType.KNIGHT) {
-            int[][] kn_directions = {{1, 2}, {2, 1}, {2, -1}, {1, -2}, {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}};
+            int[][] knDirections = {{1, 2}, {2, 1}, {2, -1}, {1, -2}, {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}};
             KnightMovesCalculator knight = new KnightMovesCalculator();
-            return knight.knightMoves(board, myPosition, kn_directions);
+            return knight.knightMoves(board, myPosition, knDirections);
         }
         else if (piece == PieceType.BISHOP) {
-            int[][] b_directions = {{1,1}, {1, -1}, {-1, -1}, {-1, 1}};
+            int[][] bDirections = {{1,1}, {1, -1}, {-1, -1}, {-1, 1}};
             BishopMovesCalculator bishop = new BishopMovesCalculator();
-            return bishop.bishopMoves(board, myPosition, b_directions);
+            return bishop.bishopMoves(board, myPosition, bDirections);
         }
         else if (piece == PieceType.ROOK) {
-            int[][] r_directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+            int[][] rDirections = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
             RookMovesCalculator rook = new RookMovesCalculator();
-            return rook.rookMoves(board, myPosition, r_directions);
+            return rook.rookMoves(board, myPosition, rDirections);
         }
         else if (piece == PieceType.PAWN) {
-            int[][] p_directions = {{1,0}, {-1,0}};
+            int[][] pDirections = {{1,0}, {-1,0}};
             PawnMovesCalculator pawn = new PawnMovesCalculator();
-            return pawn.pawnMoves(board, myPosition, p_directions);
+            return pawn.pawnMoves(board, myPosition, pDirections);
         }
         else {return null;}
     }
