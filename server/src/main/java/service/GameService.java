@@ -4,7 +4,6 @@ import dataaccess.MemoryAuthDataAccess;
 import dataaccess.MemoryGameDataAccess;
 import exception.ServiceException;
 import model.AuthData;
-import model.GameData;
 import request.ClearRequest;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
@@ -14,6 +13,7 @@ import result.CreateGameResult;
 import result.JoinGameResult;
 import result.ListGamesResult;
 import java.util.List;
+import java.util.Map;
 
 public class GameService {
     private final MemoryAuthDataAccess authDAO;
@@ -26,7 +26,6 @@ public class GameService {
 
     public CreateGameResult createGame(CreateGameRequest request) throws ServiceException {
         if (authDAO.getAuth(request.authToken()) == null) {
-            System.out.println(request.authToken());
             throw new ServiceException("Error: unauthorized");
         }
         else {
@@ -38,12 +37,14 @@ public class GameService {
     public JoinGameResult joinGame(JoinGameRequest request) throws ServiceException {
         if (authDAO.getAuth(request.token()) == null) {
             throw new ServiceException("Error: unauthorized");
+        } else if(request.color() == null | request.gameID() == null) {
+            throw new ServiceException("Error: bad request");
         } else {
             AuthData auth = authDAO.getAuth(request.token());
             if (auth.username() != null) {
                 if (gameDAO.getGame(request.gameID()) == null) {
                     throw new ServiceException("Error: bad request");
-                } else if ((request.color().equals("WHITE") && gameDAO.getGame(request.gameID()).blackUsername() != null) | (request.color().equals("WHITE") && gameDAO.getGame(request.gameID()).whiteUsername() != null)) {
+                } else if ((request.color().equals("BLACK") && gameDAO.getGame(request.gameID()).blackUsername() != null) | (request.color().equals("WHITE") && gameDAO.getGame(request.gameID()).whiteUsername() != null)) {
                     throw new ServiceException("Error: already taken");
                 } else {
                     gameDAO.setUsername(request.color(), auth, request.gameID());
@@ -57,7 +58,7 @@ public class GameService {
         if (authDAO.getAuth(request.token()) == null) {
             throw new ServiceException("Error: unauthorized");
         } else {
-            List<GameData> games = gameDAO.listGames();
+            List<Map<String, Object>> games = gameDAO.listGames();
             return new ListGamesResult(games);
         }
     }

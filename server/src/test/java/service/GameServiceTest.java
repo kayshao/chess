@@ -1,18 +1,12 @@
 package service;
-
-import chess.ChessGame;
 import dataaccess.MemoryAuthDataAccess;
 import dataaccess.MemoryGameDataAccess;
 import dataaccess.MemoryUserDataAccess;
 import exception.ServiceException;
-import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import request.*;
 import result.*;
-import spark.CustomErrorPages;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +24,7 @@ class GameServiceTest {
             userService.register(new RegisterRequest("myUser", "myPass", "my@mail.com"));
             LoginResult loginResult = userService.login(new LoginRequest("myUser", "myPass"));
             this.authToken = loginResult.authToken();
-            CreateGameResult createResult = gameService.createGame(new CreateGameRequest(authToken, "myGame"));
+            gameService.createGame(new CreateGameRequest(authToken, "myGame"));
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
@@ -41,7 +35,7 @@ class GameServiceTest {
         try {
             CreateGameRequest request = new CreateGameRequest(authToken, "nameOfGame");
             CreateGameResult result = gameService.createGame(request);
-            assertEquals(result.gameID(), 1);
+            assertEquals(result.gameID(), 2);
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
@@ -75,9 +69,8 @@ class GameServiceTest {
         try {
             ListGamesRequest request = new ListGamesRequest(authToken);
             ListGamesResult result = gameService.listGames(request);
-            // assertEquals(List.of(new GameData(1, null, null, "myGame", new ChessGame())), result.gameList());
-            assertFalse(result.gameList().isEmpty());
-            assertEquals(1, result.gameList().size());
+            assertFalse(result.games().isEmpty());
+            assertEquals(1, result.games().size());
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
@@ -96,7 +89,7 @@ class GameServiceTest {
             ClearResult result = gameService.clear(request);
             assertEquals("", result.result());
             ListGamesResult listGames = gameService.listGames(new ListGamesRequest(authToken));
-            assertNull(listGames.gameList());
+            assertEquals(0, listGames.games().size());
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }

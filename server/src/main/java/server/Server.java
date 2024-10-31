@@ -7,7 +7,6 @@ import handler.Handler;
 import service.GameService;
 import service.UserService;
 import spark.*;
-import exception.ResponseException;
 
 public class Server {
 
@@ -30,11 +29,7 @@ public class Server {
         Spark.delete("/session", handler::handleLogout);
         Spark.get("/game", handler::handleListGames);
         Spark.post("/game", handler::handleCreateGame);
-        // Spark.exception(ResponseException.class, handler::handleException);
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        // Spark.init();
-        //Spark.exception(ResponseException.class, this::exceptionHandler);
+        Spark.put("/game", handler::handleJoinGame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -43,37 +38,8 @@ public class Server {
         return Spark.port();
     }
 
-    /* private void exceptionHandler(ResponseException ex, Request req, Response res) {
-        res.status(ex.StatusCode());
-    }*/
-
-
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
     }
-
-    /*private Object register(Request req, Response res) {
-        return null;
-    }
-
-    private Object clear(Request req, Response res) {
-        return "clearing";
-    }
-
-    private Object login(Request req, Response res) {
-        return "logging in";
-    }
-
-    private Object logout(Request req, Response res) {return "logging out";}
-
-    private Object listGames(Request req, Response res) {
-        return "listing games";
-    }
-
-    private Object createGame(Request req, Response res) {
-        return "creating game";
-    }
-
-     */
 }

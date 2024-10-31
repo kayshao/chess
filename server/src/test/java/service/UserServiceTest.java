@@ -34,7 +34,7 @@ class UserServiceTest {
         RegisterRequest request = new RegisterRequest("aNewUsername", "myPassword", "mail@email.com");
         try {
             RegisterResult result = userService.register(request);
-            assertNotNull(result.token());
+            assertNotNull(result.authToken());
             assertEquals("aNewUsername", result.username());
         } catch (ServiceException e) {
             throw new RuntimeException(e);

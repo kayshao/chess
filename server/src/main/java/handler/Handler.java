@@ -1,6 +1,5 @@
 package handler;
 import com.google.gson.JsonObject;
-import exception.ResponseException;
 import exception.ServiceException;
 import request.*;
 import result.*;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Handler {
-    // UserHandler.java
     private final UserService userService;
     private final GameService gameService;
     private static final Map<String, Integer> statusCodes = new HashMap<>();
@@ -31,11 +29,8 @@ public class Handler {
         this.userService = userService;
         this.gameService = gameService;
     }
-    /* private void exceptionHandler(ResponseException ex, Request req, Response res) {
-        res.status(ex.StatusCode());
-    } */
 
-    public Object handleRegister(Request req, Response res) throws ResponseException {
+    public Object handleRegister(Request req, Response res) {
         try {
             RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
             RegisterResult result = userService.register(request);
@@ -45,7 +40,7 @@ public class Handler {
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
     }
-    public Object handleLogin(Request req, Response res) throws ResponseException {
+    public Object handleLogin(Request req, Response res) {
         try {
             LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
             LoginResult result = userService.login(request);
@@ -55,7 +50,7 @@ public class Handler {
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
     }
-    public Object handleLogout(Request req, Response res) { //throws ResponseException {
+    public Object handleLogout(Request req, Response res) {
         try {
             LogoutRequest request = new LogoutRequest(req.headers("Authorization"));
             System.out.println(req.headers());
@@ -76,7 +71,7 @@ public class Handler {
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
     }
-    public Object handleListGames(Request req, Response res) { //throws ResponseException {
+    public Object handleListGames(Request req, Response res) {
         try {
             ListGamesRequest request = new ListGamesRequest(req.headers("Authorization"));
             ListGamesResult result = gameService.listGames(request);
@@ -86,10 +81,18 @@ public class Handler {
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
     }
-    public Object handleJoinGame(Request req, Response res) { //throws ResponseException {
+    public Object handleJoinGame(Request req, Response res) {
         try {
             JsonObject jsonObject = new Gson().fromJson(req.body(), JsonObject.class);
-            JoinGameRequest request = new JoinGameRequest(req.headers("Authorization"), jsonObject.get("playerColor").getAsString(), jsonObject.get("gameID").getAsInt());
+            String color = null;
+            Integer id = null;
+            if (jsonObject.has("playerColor")) {
+                color = jsonObject.get("playerColor").getAsString();
+            }
+            if (jsonObject.has("gameID")) {
+                id = jsonObject.get("gameID").getAsInt();
+            }
+            JoinGameRequest request = new JoinGameRequest(req.headers("Authorization"), color, id);
             JoinGameResult result = gameService.joinGame(request);
             return new Gson().toJson(result);
         } catch (ServiceException e) {
@@ -97,7 +100,7 @@ public class Handler {
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
     }
-    public Object handleClear(Request req, Response res) { //throws ResponseException {
+    public Object handleClear(Request req, Response res) {
         ClearRequest request = new Gson().fromJson(req.body(), ClearRequest.class);
         ClearResult result = gameService.clear(request);
         userService.clear(request);

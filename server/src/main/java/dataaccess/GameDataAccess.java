@@ -4,6 +4,7 @@ import model.GameData;
 import model.AuthData;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GameDataAccess {
 
@@ -11,9 +12,9 @@ public interface GameDataAccess {
 
     GameData getGame(int id) throws DataAccessException;
 
-    public int createGame(String name) throws DataAccessException;
+    int createGame(String name) throws DataAccessException;
 
-    List<GameData> listGames() throws DataAccessException;
+    List<Map<String, Object>> listGames() throws DataAccessException;
 
     void setUsername(String color, AuthData auth, int id) throws DataAccessException;
 }
