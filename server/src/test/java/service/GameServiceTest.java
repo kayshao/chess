@@ -96,7 +96,7 @@ class GameServiceTest {
             ClearResult result = gameService.clear(request);
             assertEquals("", result.result());
             ListGamesResult listGames = gameService.listGames(new ListGamesRequest(authToken));
-            assertEquals(null, listGames.gameList());
+            assertNull(listGames.gameList());
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }

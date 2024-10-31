@@ -25,25 +25,26 @@ public class GameService {
     }
 
     public CreateGameResult createGame(CreateGameRequest request) throws ServiceException {
-        if (authDAO.getAuth(request.token()) == null) {
-            throw new ServiceException("Error: Unauthorized");
+        if (authDAO.getAuth(request.authToken()) == null) {
+            System.out.println(request.authToken());
+            throw new ServiceException("Error: unauthorized");
         }
         else {
-        int id = gameDAO.createGame(request.name());
-        return new CreateGameResult(id);
+            int id = gameDAO.createGame(request.name());
+            return new CreateGameResult(id);
         }
     }
 
     public JoinGameResult joinGame(JoinGameRequest request) throws ServiceException {
         if (authDAO.getAuth(request.token()) == null) {
-            throw new ServiceException("Error: Unauthorized");
+            throw new ServiceException("Error: unauthorized");
         } else {
             AuthData auth = authDAO.getAuth(request.token());
             if (auth.username() != null) {
                 if (gameDAO.getGame(request.gameID()) == null) {
                     throw new ServiceException("Error: bad request");
-                } else if ((request.color().equals("black") && gameDAO.getGame(request.gameID()).blackUsername() != null) | (request.color().equals("white") && gameDAO.getGame(request.gameID()).whiteUsername() != null)) {
-                    throw new ServiceException("Error: Already Taken");
+                } else if ((request.color().equals("WHITE") && gameDAO.getGame(request.gameID()).blackUsername() != null) | (request.color().equals("WHITE") && gameDAO.getGame(request.gameID()).whiteUsername() != null)) {
+                    throw new ServiceException("Error: already taken");
                 } else {
                     gameDAO.setUsername(request.color(), auth, request.gameID());
                 }
@@ -54,7 +55,7 @@ public class GameService {
 
     public ListGamesResult listGames(ListGamesRequest request) throws ServiceException {
         if (authDAO.getAuth(request.token()) == null) {
-            throw new ServiceException("Error: Unauthorized");
+            throw new ServiceException("Error: unauthorized");
         } else {
             List<GameData> games = gameDAO.listGames();
             return new ListGamesResult(games);
