@@ -69,7 +69,6 @@ public class Handler {
     public Object handleCreateGame(Request req, Response res) { //throws ResponseException {
         try {
             CreateGameRequest request = new CreateGameRequest(req.headers("Authorization"), req.body());
-            // String authToken = request.token();
             CreateGameResult result = gameService.createGame(request);
             return new Gson().toJson(result);
         } catch (ServiceException e) {
