@@ -117,13 +117,7 @@ public class ChessGame {
             return false;
         }
         else {
-            Collection<ChessPosition> piecePositions = board.getPiecePositions(teamColor);
-            for (ChessPosition position : piecePositions) {
-                if (!validMoves(position).isEmpty()) {
-                    return false;
-                }
-            }
-            return true;
+            return possibleMoves(teamColor);
         }
     }
 
@@ -139,13 +133,7 @@ public class ChessGame {
             return false;
         }
         else {
-            Collection<ChessPosition> piecePositions = board.getPiecePositions(teamColor);
-            for (ChessPosition position : piecePositions) {
-                if (!validMoves(position).isEmpty()) {
-                    return false;
-                }
-            }
-            return true;
+            return possibleMoves(teamColor);
         }
     }
 
@@ -166,4 +154,14 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return board;}
 
+
+    private boolean possibleMoves(TeamColor teamColor) {
+        Collection<ChessPosition> piecePositions = board.getPiecePositions(teamColor);
+        for (ChessPosition position : piecePositions) {
+            if (!validMoves(position).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
