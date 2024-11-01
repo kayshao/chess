@@ -94,13 +94,15 @@ class PawnMovesCalculator extends PieceMovesCalculator {
         ChessPosition possibleEnd = new ChessPosition(i + d, j);
         ChessPosition start = new ChessPosition(i, j);
         if (board.getPiece(possibleEnd) == null) {
-            moves.add(new ChessMove(start, possibleEnd, null));
             if ((color == ChessGame.TeamColor.BLACK && i == 2) | (color == ChessGame.TeamColor.WHITE && i == 7)) {
                 addPromotion(moves, start, possibleEnd);
-            } else if ((color == ChessGame.TeamColor.BLACK && i == 7) | (color == ChessGame.TeamColor.WHITE && i == 2)) {
-                ChessPosition possibleEnd2 = new ChessPosition(i + 2 * d, j);
-                if (board.getPiece(possibleEnd2) == null) {
-                    moves.add(new ChessMove(new ChessPosition(i, j), possibleEnd2, null));
+            } else {
+                moves.add(new ChessMove(start, possibleEnd, null));
+                if ((color == ChessGame.TeamColor.BLACK && i == 7) | (color == ChessGame.TeamColor.WHITE && i == 2)) {
+                    ChessPosition possibleEnd2 = new ChessPosition(i + 2 * d, j);
+                    if (board.getPiece(possibleEnd2) == null) {
+                        moves.add(new ChessMove(new ChessPosition(i, j), possibleEnd2, null));
+                    }
                 }
             }
         }
@@ -122,9 +124,11 @@ class PawnMovesCalculator extends PieceMovesCalculator {
             ChessPosition possibleAttack = new ChessPosition(i + d, j + c);
             if (board.getPiece(possibleAttack) != null) {
                 if (board.getPiece(possibleAttack).getTeamColor() != color) {
-                    moves.add(new ChessMove(start, possibleAttack, null));
                     if ((color == ChessGame.TeamColor.BLACK && i == 2) | (color == ChessGame.TeamColor.WHITE && i == 7)) {
                         addPromotion(moves, start, possibleAttack);
+                    }
+                    else {
+                        moves.add(new ChessMove(start, possibleAttack, null));
                     }
                 }
             }
