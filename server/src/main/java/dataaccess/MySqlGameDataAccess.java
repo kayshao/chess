@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 
@@ -21,7 +22,20 @@ public class MySqlGameDataAccess implements GameDataAccess {
     }
 
     public GameData getGame(int id) throws DataAccessException {
-        return null;
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT id, white_username, black_username, name FROM game WHERE id=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, id);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return new GameData(rs.getInt("id"), rs.getString("white_username"), rs.getString("black_username"), rs.getString("name"), null);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        throw new DataAccessException("Did not return anything");
     }
 
     public int createGame(String name) throws DataAccessException {
