@@ -58,6 +58,12 @@ public class DatabaseManager {
             white_username VARCHAR(256),
             PRIMARY KEY (id)
             )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS auth(
+            token VARCHAR(256) NOT NULL,
+            username VARCHAR(256) NOT NULL,
+            PRIMARY KEY(token)
         """};
 
     static void createDatabase() throws DataAccessException {
