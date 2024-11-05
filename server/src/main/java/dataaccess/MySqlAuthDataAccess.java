@@ -42,7 +42,8 @@ public class MySqlAuthDataAccess implements AuthDataAccess {
     }
 
     public void deleteAuth(String authToken) throws DataAccessException {
-
+        var statement = "DELETE FROM auth WHERE token=?";
+        executeUpdate(statement, authToken);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {

@@ -66,6 +66,12 @@ class MySqlAuthDataAccessTest {
     }
 
     @Test
-    void deleteAuth() {
+    void deleteAuthPositive() {
+        assertDoesNotThrow(() -> authDAO.deleteAuth(authDAO.createAuth("myTestUser")));
+    }
+
+    @Test
+    void deleteAuthNegative() {
+        assertThrows(DataAccessException.class, () -> authDAO.deleteAuth("fakeAuth"));
     }
 }
