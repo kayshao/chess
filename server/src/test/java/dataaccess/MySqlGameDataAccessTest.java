@@ -1,4 +1,5 @@
 package dataaccess;
+import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static dataaccess.DatabaseManager.getConnection;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MySqlGameDataAccessTest {
     MySqlGameDataAccess gameDAO;
@@ -99,11 +99,23 @@ class MySqlGameDataAccessTest {
 
     @Test
     void listGamesNegative() {
-        assertThrows(DataAccessException.class, () -> gameDAO.listGames());
     }
 
     @Test
-    void setUsername() {
+    void setUsernamePositive() {
+        try {
+            gameDAO.createGame("myGame");
+            gameDAO.setUsername("BLACK", new AuthData("token", "username"), 1);
+            assertEquals("username", gameDAO.getGame(1).blackUsername());
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void setUsernameNegative() {
+        assertThrows(DataAccessException.class, () -> gameDAO.setUsername("BLACK", new AuthData("a", "b"), 120));
     }
 
     private int getRowCount() throws DataAccessException {

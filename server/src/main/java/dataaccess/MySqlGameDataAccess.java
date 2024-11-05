@@ -82,8 +82,32 @@ public class MySqlGameDataAccess implements GameDataAccess {
     }
 
     public void setUsername(String color, AuthData auth, int id) throws DataAccessException {
-
+        int rows = 0;
+        try (var conn = DatabaseManager.getConnection()) {
+            if (color.equals("BLACK")) {
+                var statement = "UPDATE game SET black_username = ? WHERE id = ?";
+                try (var ps = conn.prepareStatement(statement)) {
+                    ps.setString(1, auth.username());
+                    ps.setInt(2, id);
+                    rows = ps.executeUpdate();
+                }
+            }
+            else {
+                var statement = "UPDATE game SET white_username = ? WHERE id = ?";
+                try (var ps = conn.prepareStatement(statement)) {
+                    ps.setString(1, auth.username());
+                    ps.setInt(2, id);
+                    rows = ps.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        if (rows != 1) {
+            throw new DataAccessException("Did not update expected number of rows");
+        }
     }
+
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
