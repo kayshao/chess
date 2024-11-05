@@ -35,6 +35,12 @@ class MySqlAuthDataAccessTest {
 
     @Test
     void clear() {
+        try {
+            authDAO.createAuth("myUser");
+            assertDoesNotThrow(() -> authDAO.clear());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -62,7 +68,7 @@ class MySqlAuthDataAccessTest {
 
     @Test
     void createAuthNegative() {
-        // assertThrows(DataAccessException.class, () -> authDAO.createAuth("not in db"));
+        assertThrows(DataAccessException.class, () -> authDAO.createAuth(null));
     }
 
     @Test
@@ -72,6 +78,6 @@ class MySqlAuthDataAccessTest {
 
     @Test
     void deleteAuthNegative() {
-        assertThrows(DataAccessException.class, () -> authDAO.deleteAuth("fakeAuth"));
+        assertThrows(DataAccessException.class, () -> authDAO.deleteAuth(null));
     }
 }
