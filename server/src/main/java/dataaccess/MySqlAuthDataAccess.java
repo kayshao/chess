@@ -19,7 +19,20 @@ public class MySqlAuthDataAccess implements AuthDataAccess {
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
-        return null;
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username FROM auth WHERE token=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return new AuthData(authToken, rs.getString("username"));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        throw new DataAccessException("Did not return anything");
     }
 
     public String createAuth(String username) throws DataAccessException {

@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.AuthData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,17 @@ class MySqlAuthDataAccessTest {
     }
 
     @Test
-    void getAuth() {
+    void getAuthPositive() {
+        try {
+            assertEquals("m", authDAO.getAuth(authDAO.createAuth("m")).username());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void getAuthNegative() {
+        assertThrows(DataAccessException.class, () -> authDAO.getAuth("fakeAuth"));
     }
 
     @Test
