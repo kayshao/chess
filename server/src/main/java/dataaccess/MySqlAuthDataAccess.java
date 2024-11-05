@@ -3,6 +3,7 @@ package dataaccess;
 import model.AuthData;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 import static dataaccess.DatabaseManager.createDatabase;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -22,7 +23,9 @@ public class MySqlAuthDataAccess implements AuthDataAccess {
     }
 
     public String createAuth(String username) throws DataAccessException {
-        return "";
+        String token = UUID.randomUUID().toString();
+        executeUpdate("INSERT INTO auth (token, username) VALUES (?, ?)", token, username);
+        return token;
     }
 
     public void deleteAuth(String authToken) throws DataAccessException {

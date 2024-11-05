@@ -64,6 +64,7 @@ public class DatabaseManager {
             token VARCHAR(256) NOT NULL,
             username VARCHAR(256) NOT NULL,
             PRIMARY KEY(token)
+            )
         """};
 
     static void createDatabase() throws DataAccessException {

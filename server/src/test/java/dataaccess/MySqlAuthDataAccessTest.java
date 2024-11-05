@@ -41,7 +41,17 @@ class MySqlAuthDataAccessTest {
     }
 
     @Test
-    void createAuth() {
+    void createAuthPositive() {
+        try {
+            assertNotNull(authDAO.createAuth("me"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void createAuthNegative() {
+        // assertThrows(DataAccessException.class, () -> authDAO.createAuth("not in db"));
     }
 
     @Test
