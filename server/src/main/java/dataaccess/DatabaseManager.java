@@ -53,7 +53,7 @@ public class DatabaseManager {
         """
         CREATE TABLE IF NOT EXISTS game(
             id INT NOT NULL AUTO_INCREMENT,
-            name varchar(256),
+            name varchar(256) NOT NULL,
             black_username varchar(256),
             white_username varchar(256),
             PRIMARY KEY (id)
