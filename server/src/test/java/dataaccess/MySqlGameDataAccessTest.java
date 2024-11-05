@@ -30,10 +30,25 @@ class MySqlGameDataAccessTest {
 
     @AfterEach
     void tearDown() {
+        try {
+            gameDAO.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Test
     void clear() {
+        try {
+            gameDAO.createGame("myGame");
+            gameDAO.createGame("newOne");
+            gameDAO.createGame("emag");
+            assertEquals(3, getRowCount());
+            gameDAO.clear();
+            assertEquals(0, getRowCount());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
