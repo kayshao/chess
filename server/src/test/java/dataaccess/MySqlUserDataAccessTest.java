@@ -1,6 +1,7 @@
 package dataaccess;
 
 import exception.ServiceException;
+import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,29 +30,44 @@ class MySqlUserDataAccessTest {
 
     @Test
     void clear() {
+        try {
+            userDAO.createUser("anotherUser", "myPass", "my@mail.com");
+            userDAO.createUser("chicken", "chicken", "chicken@mail.com");
+            userDAO.createUser("emanresu", "drowssap", "moc@liame");
+            assertEquals(3, getRowCount());
+            userDAO.clear();
+            assertEquals(0, getRowCount());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
     void GetUserPositive() {
+        try {
+            userDAO.createUser("myUser", "myPass", "my@email.com");
+            UserData gotUser = userDAO.getUser("myUser");
+            assertEquals(new UserData("myUser", "myPass", "my@email.com"), gotUser);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
     void getUserNegative() {
-
+        assertThrows(DataAccessException.class, () -> userDAO.getUser("chicken"));
     }
 
     @Test
     void CreateUserPositive() {
         try {
             userDAO.createUser("myUser", "myPass", "my@email.com");
-            int rowCount = getRowCount(userDAO);
+            int rowCount = getRowCount();
             assertEquals(1, rowCount, "Table should contain exactly one row");
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
-
-
 
     @Test
     void createUserNegative() {
@@ -59,7 +75,7 @@ class MySqlUserDataAccessTest {
 
     }
 
-    private int getRowCount(MySqlUserDataAccess userDAO) throws DataAccessException {
+    private int getRowCount() throws DataAccessException {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM user")) {
@@ -75,7 +91,10 @@ class MySqlUserDataAccessTest {
 
     @AfterEach
     void takeDown() {
-        clear();
+        try {
+            userDAO.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
-
 }
