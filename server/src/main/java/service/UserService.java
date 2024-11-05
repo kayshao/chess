@@ -1,6 +1,5 @@
 package service;
-import dataaccess.MemoryAuthDataAccess;
-import dataaccess.MemoryUserDataAccess;
+import dataaccess.*;
 import exception.ServiceException;
 import model.AuthData;
 import model.UserData;
@@ -14,15 +13,15 @@ import result.LoginResult;
 import request.RegisterRequest;
 
 public class UserService {
-    private final MemoryAuthDataAccess authDAO;
-    private final MemoryUserDataAccess userDAO;
+    private final AuthDataAccess authDAO;
+    private final UserDataAccess userDAO;
 
-    public UserService(MemoryAuthDataAccess authDAO, MemoryUserDataAccess userDAO) {
+    public UserService(AuthDataAccess authDAO, UserDataAccess userDAO) {
         this.authDAO = authDAO;
         this.userDAO = userDAO;
     }
 
-    public RegisterResult register(RegisterRequest request) throws ServiceException {
+    public RegisterResult register(RegisterRequest request) throws ServiceException, DataAccessException {
         if(request.username() == null | request.password() == null | request.email() == null) {
             throw new ServiceException("Error: bad request");
         }
@@ -34,7 +33,7 @@ public class UserService {
         }
         else {throw new ServiceException("Error: already taken");}
     }
-    public LoginResult login(LoginRequest request) throws ServiceException {
+    public LoginResult login(LoginRequest request) throws ServiceException, DataAccessException {
         UserData userData = userDAO.getUser(request.username());
         if (userData == null) {throw new ServiceException("Error: unauthorized");}
         else if(!(userData.password().equals(request.password()))) {
@@ -45,7 +44,7 @@ public class UserService {
             return new LoginResult(request.username(), authToken);
         }
     }
-    public LogoutResult logout(LogoutRequest request) throws ServiceException {
+    public LogoutResult logout(LogoutRequest request) throws ServiceException, DataAccessException {
         AuthData authData = authDAO.getAuth(request.token());
         if (authData == null) {
             throw new ServiceException("Error: unauthorized");
@@ -56,7 +55,7 @@ public class UserService {
             return new LogoutResult("");
         }
     }
-    public ClearResult clear(ClearRequest request) {
+    public ClearResult clear(ClearRequest request) throws DataAccessException {
         authDAO.clear();
         userDAO.clear();
         return new ClearResult("");

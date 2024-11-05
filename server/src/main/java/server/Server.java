@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.MemoryAuthDataAccess;
-import dataaccess.MemoryGameDataAccess;
-import dataaccess.MemoryUserDataAccess;
+import dataaccess.*;
 import handler.Handler;
 import service.GameService;
 import service.UserService;
@@ -16,9 +14,17 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        MemoryAuthDataAccess auth = new MemoryAuthDataAccess();
-        MemoryUserDataAccess user = new MemoryUserDataAccess();
-        MemoryGameDataAccess game = new MemoryGameDataAccess();
+        AuthDataAccess auth = null;
+        UserDataAccess user = null;
+        GameDataAccess game = null;
+        try {
+            auth = new MySqlAuthDataAccess();
+            user = new MySqlUserDataAccess();
+            game = new MySqlGameDataAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
         UserService userService = new UserService(auth, user);
         GameService gameService = new GameService(auth, game);
         Handler handler = new Handler(userService, gameService);

@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDataAccess;
 import dataaccess.MemoryUserDataAccess;
 import exception.ServiceException;
@@ -21,10 +22,10 @@ class UserServiceTest {
 
     @BeforeEach
     void init() {
-        this.userService = new UserService(new MemoryAuthDataAccess(), new MemoryUserDataAccess());
+        // this.userService = new UserService(new MemoryAuthDataAccess(), new MemoryUserDataAccess());
         try {
             userService.register(new RegisterRequest("myUsername", "myPassword", "my@email.com"));
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -36,7 +37,7 @@ class UserServiceTest {
             RegisterResult result = userService.register(request);
             assertNotNull(result.authToken());
             assertEquals("aNewUsername", result.username());
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -53,7 +54,7 @@ class UserServiceTest {
         try {
             LoginResult result = userService.login(request);
             assertNotNull(result.authToken());
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -73,7 +74,7 @@ class UserServiceTest {
             LogoutResult logoutResult = userService.logout(logoutRequest);
             assertNotNull(logoutResult);
             assertEquals("", logoutResult.result());
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -85,7 +86,7 @@ class UserServiceTest {
     }
 
     @Test
-    void clear() {
+    void clear() throws DataAccessException {
         ClearRequest request = new ClearRequest();
         ClearResult result = userService.clear(request);
 

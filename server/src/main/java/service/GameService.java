@@ -1,7 +1,6 @@
 package service;
 
-import dataaccess.MemoryAuthDataAccess;
-import dataaccess.MemoryGameDataAccess;
+import dataaccess.*;
 import exception.ServiceException;
 import model.AuthData;
 import request.ClearRequest;
@@ -16,15 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 public class GameService {
-    private final MemoryAuthDataAccess authDAO;
-    private final MemoryGameDataAccess gameDAO;
+    private final AuthDataAccess authDAO;
+    private final GameDataAccess gameDAO;
 
-    public GameService(MemoryAuthDataAccess authDAO, MemoryGameDataAccess gameDAO) {
+    public GameService(AuthDataAccess authDAO, GameDataAccess gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
     }
 
-    public CreateGameResult createGame(CreateGameRequest request) throws ServiceException {
+    public CreateGameResult createGame(CreateGameRequest request) throws ServiceException, DataAccessException {
         if (authDAO.getAuth(request.authToken()) == null) {
             throw new ServiceException("Error: unauthorized");
         }
@@ -34,7 +33,7 @@ public class GameService {
         }
     }
 
-    public JoinGameResult joinGame(JoinGameRequest request) throws ServiceException {
+    public JoinGameResult joinGame(JoinGameRequest request) throws ServiceException, DataAccessException {
         if (authDAO.getAuth(request.token()) == null) {
             throw new ServiceException("Error: unauthorized");
         } else if(request.color() == null | request.gameID() == null) {
@@ -57,7 +56,7 @@ public class GameService {
         }
     }
 
-    public ListGamesResult listGames(ListGamesRequest request) throws ServiceException {
+    public ListGamesResult listGames(ListGamesRequest request) throws ServiceException, DataAccessException {
         if (authDAO.getAuth(request.token()) == null) {
             throw new ServiceException("Error: unauthorized");
         } else {
@@ -66,7 +65,7 @@ public class GameService {
         }
     }
 
-    public ClearResult clear(ClearRequest request) {
+    public ClearResult clear(ClearRequest request) throws DataAccessException {
         gameDAO.clear();
         return new ClearResult("");
     }

@@ -1,7 +1,5 @@
 package service;
-import dataaccess.MemoryAuthDataAccess;
-import dataaccess.MemoryGameDataAccess;
-import dataaccess.MemoryUserDataAccess;
+import dataaccess.*;
 import exception.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,14 +16,14 @@ class GameServiceTest {
     @BeforeEach
     void init() {
         try {
-            MemoryAuthDataAccess authDAO = new MemoryAuthDataAccess();
+            AuthDataAccess authDAO = new MemoryAuthDataAccess();
             this.gameService = new GameService(authDAO, new MemoryGameDataAccess());
-            UserService userService = new UserService(authDAO, new MemoryUserDataAccess());
-            userService.register(new RegisterRequest("myUser", "myPass", "my@mail.com"));
-            LoginResult loginResult = userService.login(new LoginRequest("myUser", "myPass"));
-            this.authToken = loginResult.authToken();
+            // UserService userService = new UserService(authDAO, new UserDataAccess());
+            // userService.register(new RegisterRequest("myUser", "myPass", "my@mail.com"));
+            // LoginResult loginResult = userService.login(new LoginRequest("myUser", "myPass"));
+            // this.authToken = loginResult.authToken();
             gameService.createGame(new CreateGameRequest(authToken, "myGame"));
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -36,7 +34,7 @@ class GameServiceTest {
             CreateGameRequest request = new CreateGameRequest(authToken, "nameOfGame");
             CreateGameResult result = gameService.createGame(request);
             assertEquals(result.gameID(), 2);
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -53,7 +51,7 @@ class GameServiceTest {
             JoinGameRequest request = new JoinGameRequest(authToken, "black", 1);
             JoinGameResult result = gameService.joinGame(request);
             assertEquals("", result.result());
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -71,7 +69,7 @@ class GameServiceTest {
             ListGamesResult result = gameService.listGames(request);
             assertFalse(result.games().isEmpty());
             assertEquals(1, result.games().size());
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -90,7 +88,7 @@ class GameServiceTest {
             assertEquals("", result.result());
             ListGamesResult listGames = gameService.listGames(new ListGamesRequest(authToken));
             assertEquals(0, listGames.games().size());
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }

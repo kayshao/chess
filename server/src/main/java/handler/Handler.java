@@ -1,5 +1,6 @@
 package handler;
 import com.google.gson.JsonObject;
+import dataaccess.DataAccessException;
 import exception.ServiceException;
 import request.*;
 import result.*;
@@ -35,7 +36,7 @@ public class Handler {
             RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
             RegisterResult result = userService.register(request);
             return new Gson().toJson(result);
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             res.status(getStatus(e.getMessage()));
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
@@ -45,7 +46,7 @@ public class Handler {
             LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
             LoginResult result = userService.login(request);
             return new Gson().toJson(result);
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             res.status(getStatus(e.getMessage()));
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
@@ -56,7 +57,7 @@ public class Handler {
             System.out.println(req.headers());
             userService.logout(request);
             return new Gson().toJson(new Object());
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             res.status(getStatus(e.getMessage()));
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
@@ -66,7 +67,7 @@ public class Handler {
             CreateGameRequest request = new CreateGameRequest(req.headers("Authorization"), req.body());
             CreateGameResult result = gameService.createGame(request);
             return new Gson().toJson(result);
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             res.status(getStatus(e.getMessage()));
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
@@ -76,7 +77,7 @@ public class Handler {
             ListGamesRequest request = new ListGamesRequest(req.headers("Authorization"));
             ListGamesResult result = gameService.listGames(request);
             return new Gson().toJson(result);
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             res.status(getStatus(e.getMessage()));
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
@@ -95,12 +96,12 @@ public class Handler {
             JoinGameRequest request = new JoinGameRequest(req.headers("Authorization"), color, id);
             JoinGameResult result = gameService.joinGame(request);
             return new Gson().toJson(result);
-        } catch (ServiceException e) {
+        } catch (ServiceException | DataAccessException e) {
             res.status(getStatus(e.getMessage()));
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
     }
-    public Object handleClear(Request req, Response res) {
+    public Object handleClear(Request req, Response res) throws DataAccessException {
         ClearRequest request = new Gson().fromJson(req.body(), ClearRequest.class);
         ClearResult result = gameService.clear(request);
         userService.clear(request);
