@@ -5,6 +5,8 @@ import model.AuthData;
 import model.GameData;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +60,25 @@ public class MySqlGameDataAccess implements GameDataAccess {
 
 
     public List<Map<String, Object>> listGames() throws DataAccessException {
-        return List.of();
+        List<Map<String, Object>> gameList = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT id, white_username, black_username, name FROM game";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Map<String, Object> gameInfo = new HashMap<>();
+                        gameInfo.put("gameID", rs.getInt("id"));
+                        gameInfo.put("whiteUsername", rs.getString("white_username"));
+                        gameInfo.put("blackUsername", rs.getString("black_username"));
+                        gameInfo.put("gameName", rs.getString("name"));
+                        gameList.add(gameInfo);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return gameList;
     }
 
     public void setUsername(String color, AuthData auth, int id) throws DataAccessException {

@@ -1,5 +1,4 @@
 package dataaccess;
-import dataaccess.MySqlUserDataAccessTest;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +8,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
 
 import static dataaccess.DatabaseManager.getConnection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -84,7 +85,21 @@ class MySqlGameDataAccessTest {
     }
 
     @Test
-    void listGames() {
+    void listGamesPositive() {
+        try {
+            gameDAO.createGame("myGame");
+            gameDAO.createGame("newOne");
+            gameDAO.createGame("emag");
+            List<Map<String, Object>> gamesList = gameDAO.listGames();
+            assertEquals(3, gamesList.size());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void listGamesNegative() {
+        assertThrows(DataAccessException.class, () -> gameDAO.listGames());
     }
 
     @Test
