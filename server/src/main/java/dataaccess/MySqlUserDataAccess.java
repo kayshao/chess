@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
@@ -31,12 +32,13 @@ public class MySqlUserDataAccess implements UserDataAccess {
         } catch (Exception e) {
             throw new DataAccessException(e.getMessage());
         }
-        throw new DataAccessException("Did not return anything");
+        return null;// throw new DataAccessException("Did not return user");
     }
 
     public void createUser(String username, String password, String email) throws DataAccessException {
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-        executeUpdate(statement, username, password, email);
+        executeUpdate(statement, username, hashedPassword, email);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {

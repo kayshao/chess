@@ -32,7 +32,7 @@ public class MySqlAuthDataAccess implements AuthDataAccess {
         } catch (Exception e) {
             throw new DataAccessException(e.getMessage());
         }
-        throw new DataAccessException("Did not return anything");
+        return null;// throw new DataAccessException("Did not return authToken");
     }
 
     public String createAuth(String username) throws DataAccessException {

@@ -22,7 +22,7 @@ public class Server {
             user = new MySqlUserDataAccess();
             game = new MySqlGameDataAccess();
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("runtime in Server"); //TODO: change back to e
         }
 
         UserService userService = new UserService(auth, user);
