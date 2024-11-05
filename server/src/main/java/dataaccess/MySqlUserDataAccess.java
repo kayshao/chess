@@ -32,7 +32,7 @@ public class MySqlUserDataAccess implements UserDataAccess {
         } catch (Exception e) {
             throw new DataAccessException(e.getMessage());
         }
-        return null;// throw new DataAccessException("Did not return user");
+        return null;
     }
 
     public void createUser(String username, String password, String email) throws DataAccessException {

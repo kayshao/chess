@@ -1,10 +1,10 @@
 package dataaccess;
 
-import exception.ServiceException;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -47,7 +47,7 @@ class MySqlUserDataAccessTest {
         try {
             userDAO.createUser("myUser", "myPass", "my@email.com");
             UserData gotUser = userDAO.getUser("myUser");
-            assertEquals(new UserData("myUser", "myPass", "my@email.com"), gotUser);
+            assertTrue(BCrypt.checkpw("myPass", gotUser.password()));
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +55,11 @@ class MySqlUserDataAccessTest {
 
     @Test
     void getUserNegative() {
-        assertThrows(DataAccessException.class, () -> userDAO.getUser("chicken"));
+        try {
+            assertNull(userDAO.getUser("chicken"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

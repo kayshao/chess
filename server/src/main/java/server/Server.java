@@ -14,15 +14,15 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        AuthDataAccess auth = null;
-        UserDataAccess user = null;
-        GameDataAccess game = null;
+        AuthDataAccess auth;
+        UserDataAccess user;
+        GameDataAccess game;
         try {
             auth = new MySqlAuthDataAccess();
             user = new MySqlUserDataAccess();
             game = new MySqlGameDataAccess();
         } catch (DataAccessException e) {
-            throw new RuntimeException("runtime in Server"); //TODO: change back to e
+            throw new RuntimeException(e.getMessage());
         }
 
         UserService userService = new UserService(auth, user);
