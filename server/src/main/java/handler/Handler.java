@@ -64,7 +64,10 @@ public class Handler {
     }
     public Object handleCreateGame(Request req, Response res) { //throws ResponseException {
         try {
-            CreateGameRequest request = new CreateGameRequest(req.headers("Authorization"), req.body());
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(req.body(), JsonObject.class);
+            String gameName = jsonObject.get("gameName").getAsString();
+            CreateGameRequest request = new CreateGameRequest(req.headers("Authorization"), gameName);
             CreateGameResult result = gameService.createGame(request);
             return new Gson().toJson(result);
         } catch (ServiceException | DataAccessException e) {
