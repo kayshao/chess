@@ -23,6 +23,7 @@ class MySqlUserDataAccessTest {
         try {
             this.userDAO = new MySqlUserDataAccess();
             this.conn = getConnection();
+            userDAO.clear();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

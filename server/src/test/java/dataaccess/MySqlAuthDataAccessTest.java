@@ -54,7 +54,11 @@ class MySqlAuthDataAccessTest {
 
     @Test
     void getAuthNegative() {
-        assertThrows(DataAccessException.class, () -> authDAO.getAuth("fakeAuth"));
+        try {
+            assertNull(authDAO.getAuth("fakeAuth"));
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Test
