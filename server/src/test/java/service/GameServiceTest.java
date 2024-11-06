@@ -18,10 +18,10 @@ class GameServiceTest {
         try {
             AuthDataAccess authDAO = new MemoryAuthDataAccess();
             this.gameService = new GameService(authDAO, new MemoryGameDataAccess());
-            // UserService userService = new UserService(authDAO, new UserDataAccess());
-            // userService.register(new RegisterRequest("myUser", "myPass", "my@mail.com"));
-            // LoginResult loginResult = userService.login(new LoginRequest("myUser", "myPass"));
-            // this.authToken = loginResult.authToken();
+            UserService userService = new UserService(authDAO, new MemoryUserDataAccess());
+            userService.register(new RegisterRequest("myUser", "myPass", "my@mail.com"));
+            LoginResult loginResult = userService.login(new LoginRequest("myUser", "myPass"));
+            this.authToken = loginResult.authToken();
             gameService.createGame(new CreateGameRequest(authToken, "myGame"));
         } catch (ServiceException | DataAccessException e) {
             throw new RuntimeException(e);

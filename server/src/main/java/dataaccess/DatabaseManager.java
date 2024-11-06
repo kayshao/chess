@@ -36,7 +36,7 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    private static final String[] createStatements = {
+    private static final String[] CREATE_STATEMENTS = {
         """
         USE\s""" + DATABASE_NAME,
         """
@@ -73,7 +73,7 @@ public class DatabaseManager {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             var createdStatement = conn.prepareStatement(createStatement, Statement.RETURN_GENERATED_KEYS);
             createdStatement.executeUpdate();
-            for (var statement : createStatements) {
+            for (var statement : CREATE_STATEMENTS) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }

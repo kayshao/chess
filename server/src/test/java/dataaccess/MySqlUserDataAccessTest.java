@@ -44,7 +44,7 @@ class MySqlUserDataAccessTest {
     }
 
     @Test
-    void GetUserPositive() {
+    void getUserPositive() {
         try {
             userDAO.createUser("myUser", "myPass", "my@email.com");
             UserData gotUser = userDAO.getUser("myUser");
@@ -64,7 +64,7 @@ class MySqlUserDataAccessTest {
     }
 
     @Test
-    void CreateUserPositive() {
+    void createUserPositive() {
         try {
             userDAO.createUser("myUser", "myPass", "my@email.com");
             int rowCount = getRowCount();

@@ -1,6 +1,5 @@
 package dataaccess;
 
-import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 
@@ -30,7 +29,9 @@ public class MySqlGameDataAccess implements GameDataAccess {
                 ps.setInt(1, id);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return new GameData(rs.getInt("id"), rs.getString("white_username"), rs.getString("black_username"), rs.getString("name"), null);
+                        return new GameData(rs.getInt("id"), rs.getString("white_username"),
+                                rs.getString("black_username"), rs.getString("name"),
+                                null);
                     }
                 }
             }
@@ -82,7 +83,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
     }
 
     public void setUsername(String color, AuthData auth, int id) throws DataAccessException {
-        int rows = 0;
+        int rows;
         try (var conn = DatabaseManager.getConnection()) {
             if (color.equals("BLACK")) {
                 var statement = "UPDATE game SET black_username = ? WHERE id = ?";
@@ -113,9 +114,15 @@ public class MySqlGameDataAccess implements GameDataAccess {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param == null) ps.setNull(i + 1, NULL);
+                    if (param instanceof String p) {
+                        ps.setString(i + 1, p);
+                    }
+                    else if (param instanceof Integer p) {
+                        ps.setInt(i + 1, p);
+                    }
+                    else if (param == null) {
+                        ps.setNull(i + 1, NULL);
+                    }
                 }
                 ps.executeUpdate();
 

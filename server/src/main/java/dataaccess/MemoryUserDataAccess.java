@@ -1,10 +1,9 @@
 package dataaccess;
-import model.GameData;
 import model.UserData;
 
 import java.util.HashMap;
 
-public class MemoryUserDataAccess {
+public class MemoryUserDataAccess implements UserDataAccess {
     private final HashMap<String, UserData> users = new HashMap<>();
 
     public void clear() {
