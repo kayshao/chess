@@ -4,14 +4,13 @@ import model.AuthData;
 import model.GameData;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static dataaccess.DatabaseManager.createDatabase;
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 
 public class MySqlGameDataAccess implements GameDataAccess {
     public MySqlGameDataAccess() throws DataAccessException {
@@ -19,7 +18,13 @@ public class MySqlGameDataAccess implements GameDataAccess {
     }
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE game";
-        executeUpdate(statement);
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     public GameData getGame(int id) throws DataAccessException {
@@ -42,14 +47,14 @@ public class MySqlGameDataAccess implements GameDataAccess {
     }
 
     public int createGame(String name) throws DataAccessException {
-        executeUpdate("INSERT INTO game (name) VALUES (?)", name);
-        var statement = "SELECT id FROM game WHERE name=?";
+        var statement = "INSERT INTO game (name) VALUES (?)";
         try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement)) {
+            try (var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, name);
-                try (var rs = ps.executeQuery()) {
+                ps.executeUpdate();
+                try (var rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
-                        return rs.getInt("id");
+                        return rs.getInt(1);
                     }
                 }
             }
@@ -106,35 +111,6 @@ public class MySqlGameDataAccess implements GameDataAccess {
         }
         if (rows != 1) {
             throw new DataAccessException("Did not update expected number of rows");
-        }
-    }
-
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) {
-                        ps.setString(i + 1, p);
-                    }
-                    else if (param instanceof Integer p) {
-                        ps.setInt(i + 1, p);
-                    }
-                    else if (param == null) {
-                        ps.setNull(i + 1, NULL);
-                    }
-                }
-                ps.executeUpdate();
-
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-
-                return 0;
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
 }
