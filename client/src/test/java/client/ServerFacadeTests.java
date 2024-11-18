@@ -5,6 +5,8 @@ import result.RegisterResult;
 import server.Server;
 import ui.ServerFacade;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ServerFacadeTests {
 
     private static Server server;
@@ -34,5 +36,16 @@ public class ServerFacadeTests {
         }
 
     }
+
+    @Test
+    public void testRegisterNegative() {
+        try {
+            facade.register("newUser", "password", "email");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        assertThrows(Exception.class, () -> facade.register("newUser", "p", "e"));
+    }
+
 
 }
