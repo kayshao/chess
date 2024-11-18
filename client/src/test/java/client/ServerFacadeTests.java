@@ -20,6 +20,15 @@ public class ServerFacadeTests {
         facade = new ServerFacade("http://localhost:" + port);
     }
 
+    @BeforeEach
+    void reset() {
+        try {
+            facade.clear();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -34,7 +43,6 @@ public class ServerFacadeTests {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Test
@@ -47,5 +55,8 @@ public class ServerFacadeTests {
         assertThrows(Exception.class, () -> facade.register("newUser", "p", "e"));
     }
 
+    @Test
+    public void testClear() {
 
+    }
 }

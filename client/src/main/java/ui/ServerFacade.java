@@ -30,7 +30,10 @@ public class ServerFacade {
 
     public void joinGame(String id, String color, String authToken) {}
 
-    public void clear() {}
+    public void clear() throws Exception {
+        var path = "/db";
+        this.makeRequest("DELETE", path, null, null);
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
         try {
