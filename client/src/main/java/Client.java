@@ -1,3 +1,5 @@
+import ui.ServerFacade;
+
 public class Client {
     private ServerFacade server;
     private String authToken;

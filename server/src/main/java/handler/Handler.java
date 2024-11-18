@@ -33,6 +33,7 @@ public class Handler {
 
     public Object handleRegister(Request req, Response res) {
         try {
+            System.out.println(req.body());
             RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
             RegisterResult result = userService.register(request);
             return new Gson().toJson(result);
