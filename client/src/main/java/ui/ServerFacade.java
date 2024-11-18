@@ -3,6 +3,11 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.google.gson.reflect.TypeToken;
 import request.*;
 import result.*;
 
@@ -33,9 +38,9 @@ public class ServerFacade {
         return this.makeRequest("POST", path, new CreateGameRequest("hidden", name), CreateGameResult.class, authToken).gameID();
     }
 
-    public void listGames(String authToken) throws Exception {
+    public List<Map<String, Object>> listGames(String authToken) throws Exception {
         var path = "/game";
-        this.makeRequest("GET", path, null, null, null);
+        return this.makeRequest("GET", path, null, ArrayList.class, null);
     }
 
     public void joinGame(String id, String color, String authToken) {}

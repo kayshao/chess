@@ -5,6 +5,9 @@ import result.*;
 import server.Server;
 import ui.ServerFacade;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -106,6 +109,27 @@ public class ServerFacadeTests {
     @Test
     public void testCreateGameNegative() {
         assertThrows(Exception.class, () -> facade.createGame("badGame", "badAuth"));
+    }
+
+    @Test
+    public void testListGamesPositive() {
+        try {
+            facade.register("create", "game", "user");
+            System.out.println("registered");
+            LoginResult result = facade.login("create", "game");
+            System.out.println(result.authToken());
+            facade.createGame("coolGame", result.authToken());
+            List<Map<String, Object>> games = facade.listGames(result.authToken());
+            System.out.println("created");
+            assert ((games).size() == 1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testListGamesNegative() {
+        assertThrows(Exception.class, () -> facade.listGames("htua"));
     }
     @Test
     public void testClear() {
