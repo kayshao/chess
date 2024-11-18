@@ -54,7 +54,6 @@ public class Handler {
     public Object handleLogout(Request req, Response res) {
         try {
             LogoutRequest request = new LogoutRequest(req.headers("Authorization"));
-            System.out.println(req.headers());
             userService.logout(request);
             return new Gson().toJson(new Object());
         } catch (ServiceException | DataAccessException e) {

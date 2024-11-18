@@ -15,15 +15,18 @@ public class ServerFacade {
 
     public RegisterResult register(String username, String password, String email) throws Exception {
         var path = "/user";
-        return this.makeRequest("POST", path, new RegisterRequest(username, password, email), RegisterResult.class);
+        return this.makeRequest("POST", path, new RegisterRequest(username, password, email), RegisterResult.class, null);
     }
 
     public LoginResult login(String username, String password) throws Exception {
         var path = "/session";
-        return this.makeRequest("POST", path, new LoginRequest(username, password), LoginResult.class);
+        return this.makeRequest("POST", path, new LoginRequest(username, password), LoginResult.class, null);
     }
 
-    public void logout(String authToken) {}
+    public void logout(String authToken) throws Exception {
+        var path = "/session";
+        this.makeRequest("DELETE", path, null, null, authToken);
+    }
 
     public void createGame(String name, String authToken) {}
 
@@ -33,10 +36,10 @@ public class ServerFacade {
 
     public void clear() throws Exception {
         var path = "/db";
-        this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", path, null, null, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -44,6 +47,9 @@ public class ServerFacade {
             http.setDoOutput(true);
 
             writeBody(request, http);
+            if (authToken != null) {
+                http.setRequestProperty("Authorization", authToken);
+            }
             http.connect();
             return readBody(http, responseClass);
         } catch (Exception e) {

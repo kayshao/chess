@@ -5,6 +5,7 @@ import result.*;
 import server.Server;
 import ui.ServerFacade;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ServerFacadeTests {
@@ -71,6 +72,21 @@ public class ServerFacadeTests {
         assertThrows(Exception.class, () -> facade.login("fakeUser", "fakePass"));
     }
 
+    @Test
+    public void testLogoutPositive() {
+        try {
+            facade.register("try", "logging", "out");
+            LoginResult result = facade.login("try", "logging");
+            assertDoesNotThrow(() -> facade.logout(result.authToken()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testLogoutNegative() {
+        assertThrows(Exception.class, () -> facade.logout("notARealAuth"));
+    }
     @Test
     public void testClear() {
 

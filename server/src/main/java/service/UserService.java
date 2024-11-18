@@ -29,7 +29,6 @@ public class UserService {
         if(userDAO.getUser(request.username()) == null) {
             userDAO.createUser(request.username(), request.password(), request.email());
             String authToken = authDAO.createAuth(request.username());
-            // System.out.println(authToken);
             return new RegisterResult(request.username(), authToken);
         }
         else {throw new ServiceException("Error: already taken");}
