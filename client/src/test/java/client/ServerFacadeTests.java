@@ -1,7 +1,7 @@
 package client;
 
 import org.junit.jupiter.api.*;
-import result.RegisterResult;
+import result.*;
 import server.Server;
 import ui.ServerFacade;
 
@@ -53,6 +53,22 @@ public class ServerFacadeTests {
             throw new RuntimeException(e);
         }
         assertThrows(Exception.class, () -> facade.register("newUser", "p", "e"));
+    }
+
+    @Test
+    public void testLoginPositive() {
+        try {
+            facade.register("user", "password", "email");
+            LoginResult result = facade.login("user", "password");
+            assert(result.username().equals("user"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testLoginNegative() {
+        assertThrows(Exception.class, () -> facade.login("fakeUser", "fakePass"));
     }
 
     @Test

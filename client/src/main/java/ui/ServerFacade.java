@@ -18,8 +18,9 @@ public class ServerFacade {
         return this.makeRequest("POST", path, new RegisterRequest(username, password, email), RegisterResult.class);
     }
 
-    public void login(String username, String password) {
-
+    public LoginResult login(String username, String password) throws Exception {
+        var path = "/session";
+        return this.makeRequest("POST", path, new LoginRequest(username, password), LoginResult.class);
     }
 
     public void logout(String authToken) {}
