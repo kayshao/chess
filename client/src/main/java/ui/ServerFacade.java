@@ -28,9 +28,15 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, null, authToken);
     }
 
-    public void createGame(String name, String authToken) {}
+    public int createGame(String name, String authToken) throws Exception {
+        var path = "/game";
+        return this.makeRequest("POST", path, new CreateGameRequest("hidden", name), CreateGameResult.class, authToken).gameID();
+    }
 
-    public void listGames(String authToken) {}
+    public void listGames(String authToken) throws Exception {
+        var path = "/game";
+        this.makeRequest("GET", path, null, null, null);
+    }
 
     public void joinGame(String id, String color, String authToken) {}
 
@@ -45,15 +51,14 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
-            writeBody(request, http);
             if (authToken != null) {
                 http.setRequestProperty("Authorization", authToken);
-            }
+                System.out.println("added authtoken");}
+            writeBody(request, http);
             http.connect();
             return readBody(http, responseClass);
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+                throw new Exception(e.getMessage());
         }
     }
 

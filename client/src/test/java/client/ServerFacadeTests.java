@@ -87,6 +87,26 @@ public class ServerFacadeTests {
     public void testLogoutNegative() {
         assertThrows(Exception.class, () -> facade.logout("notARealAuth"));
     }
+
+    @Test
+    public void testCreateGamePositive() {
+        try {
+            facade.register("create", "game", "user");
+            System.out.println("registered");
+            LoginResult result = facade.login("create", "game");
+            System.out.println(result.authToken());
+            int game = facade.createGame("coolGame", result.authToken());
+            System.out.println("created");
+            assert (game == 1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testCreateGameNegative() {
+        assertThrows(Exception.class, () -> facade.createGame("badGame", "badAuth"));
+    }
     @Test
     public void testClear() {
 

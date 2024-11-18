@@ -28,7 +28,7 @@ public class GameService {
             throw new ServiceException("Error: unauthorized");
         }
         else {
-            int id = gameDAO.createGame(request.name());
+            int id = gameDAO.createGame(request.gameName());
             return new CreateGameResult(id);
         }
     }

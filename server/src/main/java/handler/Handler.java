@@ -65,6 +65,7 @@ public class Handler {
         try {
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(req.body(), JsonObject.class);
+            System.out.println(req.body());
             String gameName = jsonObject.get("gameName").getAsString();
             CreateGameRequest request = new CreateGameRequest(req.headers("Authorization"), gameName);
             CreateGameResult result = gameService.createGame(request);
