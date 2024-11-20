@@ -1,3 +1,4 @@
+import ui.PreLoginUI;
 import ui.ServerFacade;
 
 public class Client {
@@ -8,5 +9,15 @@ public class Client {
         server = new ServerFacade(url);
     }
 
-    public void run() {}
+    public void run() {
+        System.out.println("Welcome to Chess!");
+        runPreloginUI();
+        runPostloginUI();
+    }
+    private void runPreloginUI() {
+        PreLoginUI preLoginUI = new PreLoginUI(server);
+        preLoginUI.run();
+    };
+
+    private void runPostloginUI() {};
 }
