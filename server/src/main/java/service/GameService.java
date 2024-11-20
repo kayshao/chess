@@ -36,20 +36,20 @@ public class GameService {
     public JoinGameResult joinGame(JoinGameRequest request) throws ServiceException, DataAccessException {
         if (authDAO.getAuth(request.token()) == null) {
             throw new ServiceException("Error: unauthorized");
-        } else if(request.color() == null | request.gameID() == null) {
+        } else if(request.playerColor() == null | request.gameID() == null) {
             throw new ServiceException("Error: bad request");
         } else {
             AuthData auth = authDAO.getAuth(request.token());
             if (auth.username() != null) {
                 if (gameDAO.getGame(request.gameID()) == null) {
                     throw new ServiceException("Error: bad request");
-                } else if ((request.color().equals("BLACK")
+                } else if ((request.playerColor().equals("BLACK")
                         && gameDAO.getGame(request.gameID()).blackUsername() != null)
-                        | (request.color().equals("WHITE")
+                        | (request.playerColor().equals("WHITE")
                         && gameDAO.getGame(request.gameID()).whiteUsername() != null)) {
                     throw new ServiceException("Error: already taken");
                 } else {
-                    gameDAO.setUsername(request.color(), auth, request.gameID());
+                    gameDAO.setUsername(request.playerColor(), auth, request.gameID());
                 }
             }
             return new JoinGameResult("");

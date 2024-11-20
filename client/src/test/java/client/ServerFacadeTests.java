@@ -131,6 +131,30 @@ public class ServerFacadeTests {
     public void testListGamesNegative() {
         assertThrows(Exception.class, () -> facade.listGames("htua"));
     }
+
+    @Test
+    public void testJoinGamePositive() {
+        try {
+            facade.register("create", "game", "user");
+            LoginResult result = facade.login("create", "game");
+            int game = facade.createGame("coolGame", result.authToken());
+            assertDoesNotThrow(() -> facade.joinGame(game, "BLACK", result.authToken()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    @Test
+    public void testJoinGameNegative() {
+        try {
+            facade.register("create", "game", "user");
+            LoginResult result = facade.login("create", "game");
+            facade.createGame("coolGame", result.authToken());
+            assertThrows(Exception.class, () -> facade.joinGame(5, "BLACK", result.authToken()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Test
     public void testClear() {
 

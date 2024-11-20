@@ -43,7 +43,10 @@ public class ServerFacade {
         return this.makeRequest("GET", path, null, ArrayList.class, null);
     }
 
-    public void joinGame(String id, String color, String authToken) {}
+    public void joinGame(Integer id, String color, String authToken) throws Exception {
+        var path = "/game";
+        this.makeRequest("PUT", path, new JoinGameRequest("hidden", color, id), null, authToken);
+    }
 
     public void clear() throws Exception {
         var path = "/db";
