@@ -38,9 +38,9 @@ public class ServerFacade {
         return this.makeRequest("POST", path, new CreateGameRequest("hidden", name), CreateGameResult.class, authToken).gameID();
     }
 
-    public List<Map<String, Object>> listGames(String authToken) throws Exception {
+    public ListGamesResult listGames(String authToken) throws Exception {
         var path = "/game";
-        return this.makeRequest("GET", path, null, ArrayList.class, null);
+        return this.makeRequest("GET", path, null, ListGamesResult.class, authToken);
     }
 
     public void joinGame(Integer id, String color, String authToken) throws Exception {
@@ -87,6 +87,7 @@ public class ServerFacade {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
                     response = new Gson().fromJson(reader, responseClass);
+                    System.out.println(response);
                 }
             }
         }
