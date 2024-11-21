@@ -35,7 +35,7 @@ public class Client {
                 System.out.print(msg);
             }
         }
-        System.out.println();
+        System.out.println("ting Chess... goodbye");
     };
 
     private void runPostLoginUI() {

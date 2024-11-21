@@ -19,7 +19,7 @@ public class PreLoginUI {
         return switch (cmd) {
             case "register" -> register(params);
             case "login" -> logIn(params);
-            // case "quit" -> quit();
+            case "quit" -> "quit";
             default -> help();
         };
         } catch (Exception e) {
@@ -44,7 +44,7 @@ public class PreLoginUI {
     }
     public String help() {
         return SET_TEXT_COLOR_YELLOW + """
-                Chess Startup page help
+                Chess Startup help page
                 type a command to get started
                 """ +
                 SET_TEXT_COLOR_WHITE + "to create an account" +
