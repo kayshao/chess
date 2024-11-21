@@ -8,4 +8,6 @@ public class PostLoginUI {
     public PostLoginUI(ServerFacade server) {
         facade = server;
     }
+
+    public void run() {}
 }
