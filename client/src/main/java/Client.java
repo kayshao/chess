@@ -18,7 +18,6 @@ public class Client {
     public void run() {
         System.out.println("Welcome to Chess!");
         runPreLoginUI();
-        runPostLoginUI();
     }
     private void runPreLoginUI() {
         PreLoginUI preLoginUI = new PreLoginUI(server);
@@ -30,6 +29,9 @@ public class Client {
             try {
                 result = preLoginUI.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
+                if (result.startsWith("Successful sign")) {
+                    runPostLoginUI();
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);

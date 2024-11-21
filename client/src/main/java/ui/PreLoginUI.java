@@ -23,7 +23,6 @@ public class PreLoginUI {
             default -> help();
         };
         } catch (Exception e) {
-            System.out.println("a slight error");
             return e.getMessage();
         }
 
@@ -38,7 +37,7 @@ public class PreLoginUI {
     public String logIn(String... params) throws Exception {
         if (params.length >= 2) {
             facade.login(params[0], params[1]);
-            return "Successful sign in";
+            return "Successful sign in\n";
         }
         throw new Exception("Invalid login");
     }
