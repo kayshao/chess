@@ -61,7 +61,7 @@ public class ServerFacade {
             http.setDoOutput(true);
             if (authToken != null) {
                 http.setRequestProperty("Authorization", authToken);
-                System.out.println("added authtoken");}
+            }
             writeBody(request, http);
             http.connect();
             return readBody(http, responseClass);
@@ -87,7 +87,6 @@ public class ServerFacade {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
                     response = new Gson().fromJson(reader, responseClass);
-                    System.out.println(response);
                 }
             }
         }
