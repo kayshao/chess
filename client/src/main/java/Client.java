@@ -24,7 +24,7 @@ public class Client {
         PreLoginUI preLoginUI = new PreLoginUI(server);
         var result = "";
         while (!result.equals("quit")) {
-            System.out.print("\n" + SET_TEXT_COLOR_MAGENTA + "Chess Home>>> ");
+            System.out.print("\n" + SET_TEXT_COLOR_MAGENTA + "Chess Startup>>> ");
             String line = scanner.nextLine();
 
             try {

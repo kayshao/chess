@@ -1,8 +1,9 @@
 package ui;
 import result.*;
-import ui.EscapeSequences;
 
 import java.util.Arrays;
+
+import static ui.EscapeSequences.*;
 
 public class PreLoginUI {
     private final ServerFacade facade;
@@ -19,7 +20,7 @@ public class PreLoginUI {
             case "register" -> register(params);
             case "login" -> logIn(params);
             // case "quit" -> quit();
-            default -> register();
+            default -> help();
         };
         } catch (Exception e) {
             System.out.println("a slight error");
@@ -40,5 +41,17 @@ public class PreLoginUI {
             return "Successful sign in";
         }
         throw new Exception("Invalid login");
+    }
+    public String help() {
+        return SET_TEXT_COLOR_YELLOW + """
+                Chess Startup page help
+                type a command to get started
+                """ +
+                SET_TEXT_COLOR_WHITE + "to create an account" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - register <username> <password> <email>\n" +
+                SET_TEXT_COLOR_WHITE + "to log in" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - login <username> <password>\n" +
+                SET_TEXT_COLOR_WHITE + "to quit" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - quit\n";
     }
 }
