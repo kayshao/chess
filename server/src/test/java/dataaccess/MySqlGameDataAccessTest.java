@@ -90,7 +90,7 @@ class MySqlGameDataAccessTest {
             gameDAO.createGame("myGame");
             gameDAO.createGame("newOne");
             gameDAO.createGame("emag");
-            List<Map<String, Object>> gamesList = gameDAO.listGames();
+            List<Map<String, String>> gamesList = gameDAO.listGames();
             assertEquals(3, gamesList.size());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
