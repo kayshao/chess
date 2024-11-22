@@ -20,7 +20,7 @@ public class PostLoginUI {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "logout" -> logout();
-                // case "new" -> createGame(params);
+                case "new" -> createGame(params);
                 // case "list" -> listGames(params);
                 // case "play" -> playGame(params);
                 // case "observe" -> observeGame(params);
@@ -37,6 +37,12 @@ public class PostLoginUI {
         } catch (Exception e) {
             throw new Exception(e);
         }
+    }
+    public String createGame(String... params) throws Exception {
+        if (params.length >= 1) {
+            facade.createGame(params[0], authToken);
+            return String.format("Created game %s\n", params[0]);
+        } throw new Exception("Could not create game\n");
     }
     public String help() {
         return SET_TEXT_COLOR_YELLOW + """
