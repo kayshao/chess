@@ -1,3 +1,4 @@
+import ui.GameplayUI;
 import ui.PostLoginUI;
 import ui.PreLoginUI;
 import ui.ServerFacade;
@@ -16,7 +17,7 @@ public class Client {
     }
 
     public void run() {
-        System.out.println("Welcome to Chess!");
+        System.out.println("Welcome to Chess! Type 'help' for help.");
         runPreLoginUI();
     }
     private void runPreLoginUI() {
@@ -51,11 +52,18 @@ public class Client {
             try {
                 result = postLoginUI.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
+                if (result.startsWith("Transitioning")) {
+                    runGameplayUI();
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
             }
         }
         System.out.println();
-    };
+    }
+    private void runGameplayUI() {
+        GameplayUI gameplayUI = new GameplayUI();
+        gameplayUI.run();
+    }
 }
