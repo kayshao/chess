@@ -47,11 +47,11 @@ public class PreLoginUI {
                 Chess Startup help page
                 type a command to get started
                 """ +
-                SET_TEXT_COLOR_WHITE + "to create an account" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - register <username> <password> <email>\n" +
-                SET_TEXT_COLOR_WHITE + "to log in" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - login <username> <password>\n" +
-                SET_TEXT_COLOR_WHITE + "to quit" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - quit\n";
+                SET_TEXT_COLOR_LIGHT_GREY + "to create an account - type " +
+                SET_TEXT_COLOR_WHITE + "register <username> <password> <email>\n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "to log in - type " +
+                SET_TEXT_COLOR_WHITE + "login <username> <password>\n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "to quit - type " +
+                SET_TEXT_COLOR_WHITE + "quit\n";
     }
 }

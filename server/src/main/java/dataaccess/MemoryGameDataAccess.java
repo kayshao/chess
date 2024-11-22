@@ -20,11 +20,11 @@ public class MemoryGameDataAccess implements GameDataAccess{
         return games.get(id);
     }
 
-    public List<Map<String, Object>> listGames() {
-        List<Map<String, Object>> gameList = new ArrayList<>();
+    public List<Map<String, String>> listGames() {
+        List<Map<String, String>> gameList = new ArrayList<>();
         for (GameData game : games.values()) {
-            Map<String, Object> gameInfo = new HashMap<>();
-            gameInfo.put("gameID", game.gameID());
+            Map<String, String> gameInfo = new HashMap<>();
+            gameInfo.put("gameID", String.valueOf(game.gameID()));
             gameInfo.put("whiteUsername", game.whiteUsername());
             gameInfo.put("blackUsername", game.blackUsername());
             gameInfo.put("gameName", game.gameName());

@@ -1,6 +1,7 @@
 package ui;
 import result.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,7 @@ import static ui.EscapeSequences.*;
 public class PostLoginUI {
     private final ServerFacade facade;
     private final String authToken;
-    private List<Map<String, Object>> games;
+    private ArrayList<Integer> games;
 
     public PostLoginUI(ServerFacade facade, String auth) {
         this.facade = facade;
@@ -25,7 +26,7 @@ public class PostLoginUI {
                 case "logout" -> logout();
                 case "new" -> createGame(params);
                 case "list" -> listGames();
-                // case "play" -> playGame(params);
+                case "play" -> playGame(params);
                 // case "observe" -> observeGame(params);
                 default -> help();
             };
@@ -50,23 +51,36 @@ public class PostLoginUI {
     public String listGames() throws Exception {
         try {
             ListGamesResult result = facade.listGames(authToken);
-            games = result.games();
+            ArrayList<Integer> games = new ArrayList<>();
             int gameNumber = 1;
-            for (Map<String, Object> game : games) {
-                String gameName = (String) game.get("gameName");
-                String whitePlayer = (String) game.get("whiteUsername");
-                String blackPlayer = (String) game.get("blackUsername");
-
-
-                System.out.printf("%d. %s - White: %s, Black: %s%n",
+            for (Map<String, String> game : result.games()) {
+                int gameID = Integer.parseInt(game.get("gameID"));
+                games.add(gameID);
+                String gameName = game.get("gameName");
+                String whitePlayer = game.get("whiteUsername");
+                String blackPlayer = game.get("blackUsername");
+                System.out.printf(SET_TEXT_COLOR_BLUE + "%d. %s - White: %s, Black: %s%n",
                         gameNumber++, gameName,
                         whitePlayer != null ? whitePlayer : "EMPTY",
                         blackPlayer != null ? blackPlayer : "EMPTY");
             }
+            this.games = games;
             return "";
         } catch (Exception e) {
             throw new Exception("Error listing games: " + e.getMessage());
         }
+    }
+    public String playGame(String... params) throws Exception {
+        if (params.length >= 2) {
+            try {
+                int id = Integer.parseInt(params[0].split("\\.")[0]);
+                facade.joinGame(games.get(id) - 1, params[1].toUpperCase(), authToken);
+                return "Join game successful\n";
+            } catch (Exception e) {
+                return(e+"\n");
+            }
+        }
+        throw new Exception("Unsuccessful join\n");
     }
     public String help() {
         return SET_TEXT_COLOR_YELLOW + """

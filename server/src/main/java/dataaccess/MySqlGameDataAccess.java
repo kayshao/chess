@@ -65,15 +65,15 @@ public class MySqlGameDataAccess implements GameDataAccess {
     }
 
 
-    public List<Map<String, Object>> listGames() throws DataAccessException {
-        List<Map<String, Object>> gameList = new ArrayList<>();
+    public List<Map<String, String>> listGames() throws DataAccessException {
+        List<Map<String, String>> gameList = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT id, white_username, black_username, name FROM game";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        Map<String, Object> gameInfo = new HashMap<>();
-                        gameInfo.put("gameID", rs.getInt("id"));
+                        Map<String, String> gameInfo = new HashMap<>();
+                        gameInfo.put("gameID", rs.getString("id"));
                         gameInfo.put("whiteUsername", rs.getString("white_username"));
                         gameInfo.put("blackUsername", rs.getString("black_username"));
                         gameInfo.put("gameName", rs.getString("name"));

@@ -60,7 +60,7 @@ public class GameService {
         if (authDAO.getAuth(request.token()) == null) {
             throw new ServiceException("Error: unauthorized");
         } else {
-            List<Map<String, Object>> games = gameDAO.listGames();
+            List<Map<String, String>> games = gameDAO.listGames();
             return new ListGamesResult(games);
         }
     }
