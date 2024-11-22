@@ -2,12 +2,15 @@ package ui;
 import result.*;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static ui.EscapeSequences.*;
 
 public class PostLoginUI {
     private final ServerFacade facade;
-    private String authToken;
+    private final String authToken;
+    private List<Map<String, Object>> games;
 
     public PostLoginUI(ServerFacade facade, String auth) {
         this.facade = facade;
@@ -21,7 +24,7 @@ public class PostLoginUI {
             return switch (cmd) {
                 case "logout" -> logout();
                 case "new" -> createGame(params);
-                // case "list" -> listGames(params);
+                case "list" -> listGames();
                 // case "play" -> playGame(params);
                 // case "observe" -> observeGame(params);
                 default -> help();
@@ -43,6 +46,27 @@ public class PostLoginUI {
             facade.createGame(params[0], authToken);
             return String.format("Created game %s\n", params[0]);
         } throw new Exception("Could not create game\n");
+    }
+    public String listGames() throws Exception {
+        try {
+            ListGamesResult result = facade.listGames(authToken);
+            games = result.games();
+            int gameNumber = 1;
+            for (Map<String, Object> game : games) {
+                String gameName = (String) game.get("gameName");
+                String whitePlayer = (String) game.get("whiteUsername");
+                String blackPlayer = (String) game.get("blackUsername");
+
+
+                System.out.printf("%d. %s - White: %s, Black: %s%n",
+                        gameNumber++, gameName,
+                        whitePlayer != null ? whitePlayer : "EMPTY",
+                        blackPlayer != null ? blackPlayer : "EMPTY");
+            }
+            return "";
+        } catch (Exception e) {
+            throw new Exception("Error listing games: " + e.getMessage());
+        }
     }
     public String help() {
         return SET_TEXT_COLOR_YELLOW + """
