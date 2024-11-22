@@ -1,9 +1,9 @@
 package ui;
-import result.*;
+
+import result.ListGamesResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static ui.EscapeSequences.*;

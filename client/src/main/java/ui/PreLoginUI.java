@@ -1,5 +1,7 @@
 package ui;
-import result.*;
+
+import result.LoginResult;
+import result.RegisterResult;
 
 import java.util.Arrays;
 

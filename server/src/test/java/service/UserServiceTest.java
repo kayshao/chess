@@ -1,8 +1,6 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDataAccess;
-import dataaccess.MemoryUserDataAccess;
 import exception.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

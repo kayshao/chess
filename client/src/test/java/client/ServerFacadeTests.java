@@ -1,9 +1,10 @@
 package client;
 
 import org.junit.jupiter.api.*;
-import result.*;
+import result.LoginResult;
 import server.Server;
 import ui.ServerFacade;
+import result.*;
 
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

@@ -1,15 +1,9 @@
 package ui;
 import com.google.gson.Gson;
-
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gson.reflect.TypeToken;
 import request.*;
 import result.*;
+import java.io.*;
+import java.net.*;
 
 public class ServerFacade {
     private final String serverUrl;

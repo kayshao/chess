@@ -2,13 +2,13 @@ package handler;
 import com.google.gson.JsonObject;
 import dataaccess.DataAccessException;
 import exception.ServiceException;
-import request.*;
-import result.*;
 import service.GameService;
 import service.UserService;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
+import request.*;
+import result.*;
 
 import java.util.HashMap;
 import java.util.Map;
