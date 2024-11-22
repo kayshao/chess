@@ -25,7 +25,7 @@ public class PreLoginUI {
             default -> help();
         };
         } catch (Exception e) {
-            return "Error, type 'help for help";
+            return "Error, type 'help' for help";
         }
 
     }

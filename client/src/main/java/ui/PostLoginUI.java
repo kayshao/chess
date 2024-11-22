@@ -31,15 +31,15 @@ public class PostLoginUI {
                 default -> help();
             };
         } catch (Exception e) {
-            return SET_TEXT_COLOR_RED + e.getMessage();
+            return SET_TEXT_COLOR_RED + "Error: type 'help' for help\n";
         }
     }
-    public String logout() throws Exception {
+    public String logout() {
         try {
             facade.logout(authToken);
             return "Signing out...\n";
         } catch (Exception e) {
-            throw new Exception(SET_TEXT_COLOR_RED + e);
+            return SET_TEXT_COLOR_RED + "Error: unsuccessful logout\n";
         }
     }
     public String createGame(String... params) throws Exception {
@@ -67,25 +67,37 @@ public class PostLoginUI {
             this.games = games;
             return "";
         } catch (Exception e) {
-            throw new Exception(SET_TEXT_COLOR_RED + "Error listing games: " + e.getMessage());
+            throw new Exception(SET_TEXT_COLOR_RED + "Error listing games\n");
         }
     }
     public String playGame(String... params) throws Exception {
         if (params.length == 2) {
             try {
                 int id = Integer.parseInt(params[0].split("\\.")[0]);
-                facade.joinGame(games.get(id) - 1, params[1].toUpperCase(), authToken);
+                if (id > games.size() || id < 0) {
+                    return SET_TEXT_COLOR_RED + "Error: invalid game number\n";
+                }
+                String color = params[1].toUpperCase();
+                if (!(color.equals("BLACK") || color.equals("WHITE"))) {
+                    return SET_TEXT_COLOR_RED + "Error: color must be 'black' or 'white'\n";
+                }
+                facade.joinGame(games.get(id - 1), color, authToken);
                 return "Transitioning to gameplay mode\n";
             } catch (Exception e) {
-                return(SET_TEXT_COLOR_RED + e +"\n");
+                return(SET_TEXT_COLOR_RED + "Error: expected <game number> <color>\n");
             }
         }
         throw new Exception(SET_TEXT_COLOR_RED + "Unsuccessful join\n");
     }
     public String observeGame(String... params) throws Exception {
         if (params.length == 1) {
+            int id = Integer.parseInt(params[0].split("\\.")[0]);
+            if (id > games.size() || id < 0) {
+                return SET_TEXT_COLOR_RED + "Error: invalid game number\n";
+            }
             return "Transitioning to gameplay mode\n";
-        } throw new Exception(SET_TEXT_COLOR_RED + "Error observing game");
+        }
+        throw new Exception(SET_TEXT_COLOR_RED + "Error observing game\n");
     }
     public String help() {
         return SET_TEXT_COLOR_YELLOW + """
@@ -100,6 +112,8 @@ public class PostLoginUI {
                 SET_TEXT_COLOR_WHITE + " play <game_number> <color>\n" +
                 SET_TEXT_COLOR_LIGHT_GREY + "to observe a game - type" +
                 SET_TEXT_COLOR_WHITE + " observe <game_number>\n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "to show help menu - type " +
+                SET_TEXT_COLOR_WHITE + "help\n" +
                 SET_TEXT_COLOR_LIGHT_GREY + "to log out - type " +
                 SET_TEXT_COLOR_WHITE + " logout\n";
     }
