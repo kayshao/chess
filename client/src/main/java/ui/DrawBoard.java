@@ -48,7 +48,7 @@ public class DrawBoard {
     private void drawChessBoardBackward(PrintStream out) {
         for (int row = BOARD_SIZE_SQUARES - 1; row >= 0; row--) {
             drawRowNumber(out, BOARD_SIZE_SQUARES - row);
-            drawRowOfSquares(out, row);
+            drawRowOfSquaresBackward(out, row);
             drawRowNumber(out, BOARD_SIZE_SQUARES - row);
             out.print(RESET_BG_COLOR);
             out.println();
@@ -68,14 +68,32 @@ public class DrawBoard {
             } else {
                 setDark(out);
             }
-            drawSquare(out, row, col);
+            drawSquare(out, row, col, false);
         }
     }
 
-    private static void drawSquare(PrintStream out, int row, int col) {
-        String piece = getPieceSymbol(row, col);
-        for (int i = 0; i < SQUARE_SIZE_CHARS; i++) {
-            out.print(" " + piece + " ");
+    private static void drawRowOfSquaresBackward(PrintStream out, int row) {
+        for (int col = 0; col < BOARD_SIZE_SQUARES; col++) {
+            if ((row + col) % 2 != 0) {
+                setLight(out);
+            } else {
+                setDark(out);
+            }
+            drawSquare(out, row, col, true);
+        }
+    }
+
+    private static void drawSquare(PrintStream out, int row, int col, boolean back) {
+        if (back) {
+            String piece = getPieceSymbolBack(row, col);
+            for (int i = 0; i < SQUARE_SIZE_CHARS; i++) {
+                out.print(" " + piece + " ");
+            }
+        } else {
+            String piece = getPieceSymbol(row, col);
+            for (int i = 0; i < SQUARE_SIZE_CHARS; i++) {
+                out.print(" " + piece + " ");
+            }
         }
     }
 
@@ -92,6 +110,21 @@ public class DrawBoard {
         }
         return " ";
     }
+
+    private static String getPieceSymbolBack(int row, int col) {
+        String[] pieces = {"R", "N", "B", "K", "Q", "B", "N", "R"};
+        if (row == 0) {
+            return SET_TEXT_COLOR_BLACK + pieces[col];
+        } else if (row == 7) {
+            return SET_TEXT_COLOR_WHITE + pieces[col];
+        } else if (row == 1) {
+            return SET_TEXT_COLOR_BLACK + "P";
+        } else if (row == 6) {
+            return SET_TEXT_COLOR_WHITE + "P";
+        }
+        return " ";
+    }
+
     private static void setLight(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
     }
