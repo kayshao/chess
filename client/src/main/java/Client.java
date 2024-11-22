@@ -28,10 +28,11 @@ public class Client {
 
             try {
                 result = preLoginUI.eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
-                if (result.startsWith("Successful sign")) {
-                    runPostLoginUI();
+                if (result.startsWith("a")) {
+                    runPostLoginUI(result.split(" ")[1]);
+                    result = "Welcome to Chess Startup";
                 }
+                System.out.print(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -40,15 +41,15 @@ public class Client {
         System.out.println("ting Chess... goodbye");
     };
 
-    private void runPostLoginUI() {
-        PostLoginUI postLoginUI = new PostLoginUI(server);
+    private void runPostLoginUI(String auth) {
+        PostLoginUI postLoginUI = new PostLoginUI(server, auth);
         var result = "";
-        while (!result.equals("quit")) {
+        while (!result.equals("Signing out...\n")) {
             System.out.print(SET_TEXT_COLOR_MAGENTA + "Logged in to Chess>>> ");
             String line = scanner.nextLine();
 
             try {
-                // result = postLoginUI.eval(line);
+                result = postLoginUI.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 var msg = e.toString();

@@ -36,8 +36,9 @@ public class PreLoginUI {
     }
     public String logIn(String... params) throws Exception {
         if (params.length >= 2) {
-            facade.login(params[0], params[1]);
-            return "Successful sign in\n";
+            LoginResult result = facade.login(params[0], params[1]);
+            System.out.println(SET_TEXT_COLOR_BLUE + "Successful sign in\n");
+            return "a " + result.authToken();
         }
         throw new Exception("Invalid login");
     }

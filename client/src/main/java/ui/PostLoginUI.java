@@ -7,9 +7,11 @@ import static ui.EscapeSequences.*;
 
 public class PostLoginUI {
     private final ServerFacade facade;
+    private String authToken;
 
-    public PostLoginUI(ServerFacade facade) {
+    public PostLoginUI(ServerFacade facade, String auth) {
         this.facade = facade;
+        this.authToken = auth;
     }
     public String eval(String input) {
         try {
@@ -17,7 +19,7 @@ public class PostLoginUI {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                // case "logout" -> logout(params);
+                case "logout" -> logout();
                 // case "new" -> createGame(params);
                 // case "list" -> listGames(params);
                 // case "play" -> playGame(params);
@@ -26,6 +28,14 @@ public class PostLoginUI {
             };
         } catch (Exception e) {
             return e.getMessage();
+        }
+    }
+    public String logout() throws Exception {
+        try {
+            facade.logout(authToken);
+            return "Signing out...\n";
+        } catch (Exception e) {
+            throw new Exception(e);
         }
     }
     public String help() {
@@ -42,6 +52,6 @@ public class PostLoginUI {
                 SET_TEXT_COLOR_WHITE + "to observe a game" +
                 SET_TEXT_COLOR_LIGHT_GREY + " - observe <game_number>\n" +
                 SET_TEXT_COLOR_WHITE + "to log out" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - logout";
+                SET_TEXT_COLOR_LIGHT_GREY + " - logout\n";
     }
 }
