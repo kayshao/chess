@@ -10,3 +10,6 @@ public class Main {
     client.run();
     }
 }
+
+// error handling for game that is full
+// error handling for reregister user
