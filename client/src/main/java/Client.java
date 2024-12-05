@@ -1,8 +1,10 @@
+import chess.ChessGame;
 import ui.GameplayUI;
 import ui.PostLoginUI;
 import ui.PreLoginUI;
 import ui.ServerFacade;
 
+import java.net.http.WebSocket;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -63,7 +65,20 @@ public class Client {
         System.out.println();
     }
     private void runGameplayUI() {
-        // GameplayUI gameplayUI = new GameplayUI();
-        // gameplayUI.run();
+        GameplayUI gameplayUI = new GameplayUI(new ChessGame());
+        var result = "";
+        while (true) {
+            System.out.print(SET_TEXT_COLOR_MAGENTA + "In Chess Gameplay>>> ");
+            String line = scanner.nextLine();
+            try {
+                result = gameplayUI.eval(line);
+                System.out.print(SET_TEXT_COLOR_BLUE + result);
+
+            } catch (Throwable e) {
+                var msg = e.toString();
+                System.out.print(msg);
+            }
+        }
+        // System.out.println();
     }
 }

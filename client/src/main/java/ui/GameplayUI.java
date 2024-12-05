@@ -1,4 +1,5 @@
 package ui;
+import chess.ChessBoard;
 import chess.ChessGame;
 import static ui.EscapeSequences.*;
 import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
@@ -12,9 +13,9 @@ public class GameplayUI {
     private WebSocket webSocket;
 
 
-    public GameplayUI(ChessGame game, WebSocket webSocket) {
+    public GameplayUI(ChessGame game) {
         this.game = game;
-        this.webSocket = webSocket;
+        // this.webSocket = new WebSocket();
     }
     public String eval(String input) {
         try {
@@ -22,7 +23,7 @@ public class GameplayUI {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "redraw" -> drawBoard();
+                case "redraw" -> drawBoard(game.board);
                 case "highlight" -> highlightMoves();
                 case "move" -> makeMove(params);
                 case "resign" -> resign();
@@ -30,11 +31,11 @@ public class GameplayUI {
                 default -> help();
             };
         } catch (Exception e) {
-            return SET_TEXT_COLOR_RED + "Error: type 'help' for help\n";
+            return SET_TEXT_COLOR_RED + e.getMessage();//"Error: type 'help' for help\n";
         }
     }
-    public String drawBoard() {
-        DrawBoard b = new DrawBoard();
+    public String drawBoard(ChessBoard board) {
+        DrawBoard b = new DrawBoard(board);
         b.draw();
         return null;
     }
