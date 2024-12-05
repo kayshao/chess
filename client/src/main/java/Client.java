@@ -63,7 +63,7 @@ public class Client {
         System.out.println();
     }
     private void runGameplayUI() {
-        GameplayUI gameplayUI = new GameplayUI();
-        gameplayUI.run();
+        // GameplayUI gameplayUI = new GameplayUI();
+        // gameplayUI.run();
     }
 }
