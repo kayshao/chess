@@ -24,7 +24,7 @@ public class GameplayUI {
             return switch (cmd) {
                 case "redraw" -> drawBoard();
                 case "highlight" -> highlightMoves();
-                case "move" -> makeMove();
+                case "move" -> makeMove(params);
                 case "resign" -> resign();
                 case "leave" -> leave();
                 default -> help();
@@ -42,7 +42,7 @@ public class GameplayUI {
         return null;
     }
 
-    public String makeMove() {
+    public String makeMove(String... params) {
         return null;
     }
 
@@ -55,7 +55,22 @@ public class GameplayUI {
     }
 
     public String help() {
-     return null;
+        return SET_TEXT_COLOR_YELLOW + """
+                Chess gameplay help page
+                type a command to get started
+                """ +
+                SET_TEXT_COLOR_LIGHT_GREY + "to redraw the board - type" +
+                SET_TEXT_COLOR_WHITE + " redraw\n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "to highlight legal moves - type" +
+                SET_TEXT_COLOR_WHITE + " highlight\n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "to make a move - type" +
+                SET_TEXT_COLOR_WHITE + " move <move>\n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "to resign - type" +
+                SET_TEXT_COLOR_WHITE + " resign\n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "to leave game - type" +
+                SET_TEXT_COLOR_WHITE + " leave\n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "for help - type" +
+                SET_TEXT_COLOR_WHITE + " help\n";
     }
 
 
