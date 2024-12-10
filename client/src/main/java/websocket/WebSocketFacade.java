@@ -45,10 +45,10 @@ public class WebSocketFacade extends Endpoint {
         }
     }
     private void handleServerMessage(ServerMessage message, String msg) {
-        System.out.println("handling server message");
+        System.out.println("handling server message"); // TODO: delete
         ServerMessage.ServerMessageType type = message.getServerMessageType();
         if (type == ServerMessage.ServerMessageType.LOAD_GAME) {
-            System.out.println("server message is load game");
+            System.out.println("server message is load game"); // TODO: delete
             LoadGameMessage loadGameMessage = new Gson().fromJson(msg, LoadGameMessage.class);
             ChessGame game = loadGameMessage.getGame();
             notificationHandler.updateGame(game);
@@ -72,10 +72,19 @@ public class WebSocketFacade extends Endpoint {
 
     public void connect(String authToken, Integer gameID) throws Exception {
         try {
-            var action = new ConnectCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID); //TODO: add actual username functionality
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+            var action = new ConnectCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            // this.session.getBasicRemote().sendText(new Gson().toJson(action));
+            sendCommand(action);
             System.out.println("Connected"); //TODO: delete after debugging
-        } catch (IOException e) {
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+    public void disconnect(String authToken, Integer gameID) throws Exception {
+        try {
+            var action = new LeaveCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            sendCommand(action);
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }

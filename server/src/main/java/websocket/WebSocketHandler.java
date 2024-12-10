@@ -36,33 +36,31 @@ public class WebSocketHandler {
         System.out.println("receiving message");
         UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
         switch (action.getCommandType()) {
-            case CONNECT -> {
-                System.out.println("message was connect command");
-                ConnectCommand connectCommand = new Gson().fromJson(message, ConnectCommand.class);
-                enter(connectCommand.getAuthToken(), session);
-            }
-            case LEAVE -> {
-                LeaveCommand leaveCommand = (LeaveCommand) action;
-                exit(leaveCommand.getUsername());
-            }
+            case CONNECT -> enter(action.getAuthToken(), session);
+            case LEAVE -> exit(action.getAuthToken());
             case MAKE_MOVE -> move();
             case RESIGN -> resign();
         }
     }
 
     private void enter(String authToken, Session session) throws Exception {
-        System.out.println(authToken);
-        String visitorName = authDAO.getAuth(authToken).username();
+        String username = authDAO.getAuth(authToken).username();
         var loadGame = new LoadGameMessage(new ChessGame());
-        connections.add(visitorName, session);
+        connections.add(username, session);
         session.getRemote().sendString(new Gson().toJson(loadGame));
-        var message = String.format("%s has joined the game", visitorName);
+        var message = String.format("%s has joined the game", username);
         var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(visitorName, notification);
+        connections.broadcast(username, notification);
     }
 
-    private void exit(String visitorName) throws IOException {
+    private void exit(String authToken) throws Exception {
+        String username = authDAO.getAuth(authToken).username();
+        connections.remove(username);
+        var message = String.format("%s has left the game", username);
+        var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(username, notification);
     }
+
     private void move() {}
     private void resign() {}
 }

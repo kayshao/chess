@@ -13,7 +13,6 @@ public class GameplayUI implements NotificationHandler {
     private WebSocketFacade webSocket;
     private String color;
     private String url;
-    private String user;
     private String auth;
     private Integer id;
 
@@ -70,8 +69,9 @@ public class GameplayUI implements NotificationHandler {
         return null;
     }
 
-    public String leave() {
-        return null;
+    public String leave() throws Exception {
+        webSocket.disconnect(auth, id);
+        return "Leaving game";
     }
 
     public String help() {

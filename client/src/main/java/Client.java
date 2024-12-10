@@ -80,7 +80,7 @@ public class Client {
     private void runGameplayUI(String color, String auth, Integer gameID) {   // string will be color if playing and null if observing
         GameplayUI gameplayUI = new GameplayUI(this.url, new ChessGame(), color, auth, gameID);
         var result = "";
-        while (true) {
+        while (!result.equals("Leaving game")) {
             System.out.print(SET_TEXT_COLOR_MAGENTA + "\nIn Chess Gameplay>>> ");
             String line = scanner.nextLine();
             try {
@@ -92,6 +92,6 @@ public class Client {
                 System.out.print(msg);
             }
         }
-        // System.out.println();
+        System.out.println();
     }
 }
