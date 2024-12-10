@@ -8,30 +8,29 @@ import static ui.EscapeSequences.*;
 import java.util.Arrays;
 
 
-public class GameplayUI {
+public class GameplayUI implements NotificationHandler {
     private ChessGame game;
     private WebSocketFacade webSocket;
     private String color;
     private String url;
+    private String user;
     private String auth;
     private Integer id;
-    private NotificationHandler notificationHandler;
 
 
-    public GameplayUI(String url, NotificationHandler nh, ChessGame game, String color, String authToken, Integer gameID) {
+    public GameplayUI(String url, ChessGame game, String color, String authToken, Integer gameID) {
         this.game = game;
         this.color = color;
         this.url = url;
         this.auth = authToken;
         this.id = gameID;
-        this.notificationHandler = nh;
         this.setUp();
     }
     public void setUp() {
         System.out.println("SETTING UP");   // TODO: remove after debugging
         try {
-            this.webSocket = new WebSocketFacade(url, this.notificationHandler);
-            System.out.println("websocket created");
+            this.webSocket = new WebSocketFacade(url, this);
+            System.out.println("websocket created"); // TODO: remove after dbuggig
             webSocket.connect(this.auth, this.id);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -93,6 +92,10 @@ public class GameplayUI {
                 SET_TEXT_COLOR_LIGHT_GREY + "for help - type" +
                 SET_TEXT_COLOR_WHITE + " help\n";
     }
-
+    public void updateGame(ChessGame game) {
+        System.out.println("Updating game\n");
+    }
+    public void showNotification(String msg) {}
+    public void showError(String msg) {}
 
 }

@@ -29,7 +29,7 @@ public class Server {
         UserService userService = new UserService(auth, user);
         GameService gameService = new GameService(auth, game);
         Handler handler = new Handler(userService, gameService);
-        WebSocketHandler webSocketHandler = new WebSocketHandler();
+        WebSocketHandler webSocketHandler = new WebSocketHandler(auth, user, game);
         Spark.webSocket("/ws", webSocketHandler);
 
         Spark.post("/user", handler::handleRegister);

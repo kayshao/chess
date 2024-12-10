@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_MAGENTA;
+
 //need to extend Endpoint for websocket to work properly
 public class WebSocketFacade extends Endpoint {
     private Session session;
@@ -25,7 +27,7 @@ public class WebSocketFacade extends Endpoint {
             this.notificationHandler = notificationHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            System.out.println(container.toString());
+            System.out.println(container.toString()); // TODO: remove after debugging
             this.session = container.connectToServer(this, socketURI);
 
             //set message handler
@@ -33,7 +35,8 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String msg) {
                     ServerMessage serverMessage = new Gson().fromJson(msg, ServerMessage.class);
-                    handleServerMessage(serverMessage);
+                    handleServerMessage(serverMessage, msg);
+                    System.out.print(SET_TEXT_COLOR_MAGENTA + "\nIn Chess Gameplay>>> ");
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
@@ -41,18 +44,21 @@ public class WebSocketFacade extends Endpoint {
         throw new Exception(ex.getMessage());
         }
     }
-    private void handleServerMessage(ServerMessage message) {
+    private void handleServerMessage(ServerMessage message, String msg) {
+        System.out.println("handling server message");
         ServerMessage.ServerMessageType type = message.getServerMessageType();
         if (type == ServerMessage.ServerMessageType.LOAD_GAME) {
-            LoadGameMessage loadGameMessage = (LoadGameMessage) message;
+            System.out.println("server message is load game");
+            LoadGameMessage loadGameMessage = new Gson().fromJson(msg, LoadGameMessage.class);
             ChessGame game = loadGameMessage.getGame();
+            notificationHandler.updateGame(game);
         }
-            // notificationHandler.updateGame(message.getGame());
             // case NOTIFICATION -> notificationHandler.showNotification(message.getMessage());
             // case ERROR -> notificationHandler.showError(message.getErrorMessage());
     }
 
     public void sendCommand(UserGameCommand command) {
+        System.out.println("Sending command");
         try {
             String jsonCommand = new Gson().toJson(command);
             session.getBasicRemote().sendText(jsonCommand);
@@ -66,9 +72,9 @@ public class WebSocketFacade extends Endpoint {
 
     public void connect(String authToken, Integer gameID) throws Exception {
         try {
-            var action = new ConnectCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            var action = new ConnectCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID); //TODO: add actual username functionality
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
-            System.out.println("Connected");
+            System.out.println("Connected"); //TODO: delete after debugging
         } catch (IOException e) {
             throw new Exception(e.getMessage());
         }

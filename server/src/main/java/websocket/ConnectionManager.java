@@ -1,6 +1,8 @@
 package websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.ServerMessage;
 
 
 import java.io.IOException;
@@ -11,6 +13,7 @@ public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
     public void add(String visitorName, Session session) {
+        System.out.println("adding connection");
         var connection = new Connection(visitorName, session);
         connections.put(visitorName, connection);
     }
@@ -19,12 +22,12 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(String excludeVisitorName) throws IOException {
+    public void broadcast(String excludeVisitorName, ServerMessage message) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.visitorName.equals(excludeVisitorName)) {
-//                    c.send(notification.toString());
+                    c.send(message);
                 }
             } else {
                 removeList.add(c);

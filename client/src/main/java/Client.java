@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class Client implements NotificationHandler {
+public class Client {
     private final ServerFacade server;
     private final Scanner scanner;
     private final String url;
@@ -78,7 +78,7 @@ public class Client implements NotificationHandler {
         System.out.println();
     }
     private void runGameplayUI(String color, String auth, Integer gameID) {   // string will be color if playing and null if observing
-        GameplayUI gameplayUI = new GameplayUI(this.url, this, new ChessGame(), color, auth, gameID);
+        GameplayUI gameplayUI = new GameplayUI(this.url, new ChessGame(), color, auth, gameID);
         var result = "";
         while (true) {
             System.out.print(SET_TEXT_COLOR_MAGENTA + "\nIn Chess Gameplay>>> ");
@@ -94,7 +94,4 @@ public class Client implements NotificationHandler {
         }
         // System.out.println();
     }
-    public void updateGame(String game) {}
-    public void showNotification(String msg) {}
-    public void showError(String msg) {}
 }
