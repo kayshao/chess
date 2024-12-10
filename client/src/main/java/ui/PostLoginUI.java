@@ -82,7 +82,7 @@ public class PostLoginUI {
                     return SET_TEXT_COLOR_RED + "Error: color must be 'black' or 'white'\n";
                 }
                 facade.joinGame(games.get(id - 1), color, authToken);
-                return "Transitioning to gameplay mode\n";
+                return color + " " + id + " \n";
             } catch (Exception e) {
                 return(SET_TEXT_COLOR_RED + "Error: expected <game number> <color>\n");
             }
@@ -95,7 +95,7 @@ public class PostLoginUI {
             if (id > games.size() || id < 0) {
                 return SET_TEXT_COLOR_RED + "Error: invalid game number\n";
             }
-            return "Transitioning to gameplay mode\n";
+            return "Observing game\n";
         }
         throw new Exception(SET_TEXT_COLOR_RED + "Error observing game\n");
     }

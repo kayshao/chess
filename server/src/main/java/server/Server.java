@@ -5,6 +5,7 @@ import handler.Handler;
 import service.GameService;
 import service.UserService;
 import spark.*;
+import websocket.WebSocketHandler;
 
 public class Server {
 
@@ -28,6 +29,8 @@ public class Server {
         UserService userService = new UserService(auth, user);
         GameService gameService = new GameService(auth, game);
         Handler handler = new Handler(userService, gameService);
+        WebSocketHandler webSocketHandler = new WebSocketHandler();
+        Spark.webSocket("/ws", webSocketHandler);
 
         Spark.post("/user", handler::handleRegister);
         Spark.delete("/db", handler::handleClear);
@@ -36,6 +39,7 @@ public class Server {
         Spark.get("/game", handler::handleListGames);
         Spark.post("/game", handler::handleCreateGame);
         Spark.put("/game", handler::handleJoinGame);
+
 
         Spark.awaitInitialization();
         return Spark.port();

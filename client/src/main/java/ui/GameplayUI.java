@@ -1,21 +1,41 @@
 package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
-import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
-import java.net.http.WebSocket;
+import static ui.EscapeSequences.*;
 import java.util.Arrays;
 
 
 public class GameplayUI {
     private ChessGame game;
-    private WebSocket webSocket;
+    private WebSocketFacade webSocket;
+    private String color;
+    private String url;
+    private String auth;
+    private Integer id;
+    private NotificationHandler notificationHandler;
 
 
-    public GameplayUI(ChessGame game) {
+    public GameplayUI(String url, NotificationHandler nh, ChessGame game, String color, String authToken, Integer gameID) {
         this.game = game;
-        // this.webSocket = new WebSocket();
+        this.color = color;
+        this.url = url;
+        this.auth = authToken;
+        this.id = gameID;
+        this.notificationHandler = nh;
+        this.setUp();
+    }
+    public void setUp() {
+        System.out.println("SETTING UP");   // TODO: remove after debugging
+        try {
+            this.webSocket = new WebSocketFacade(url, this.notificationHandler);
+            System.out.println("websocket created");
+            webSocket.connect(this.auth, this.id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     public String eval(String input) {
         try {
@@ -23,7 +43,7 @@ public class GameplayUI {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "redraw" -> drawBoard(game.board);
+                case "redraw" -> drawBoard(game.board, color);
                 case "highlight" -> highlightMoves();
                 case "move" -> makeMove(params);
                 case "resign" -> resign();
@@ -31,10 +51,10 @@ public class GameplayUI {
                 default -> help();
             };
         } catch (Exception e) {
-            return SET_TEXT_COLOR_RED + e.getMessage();//"Error: type 'help' for help\n";
+            return SET_TEXT_COLOR_RED + e.getMessage();//ToDO: "Error: type 'help' for help\n";
         }
     }
-    public String drawBoard(ChessBoard board) {
+    public String drawBoard(ChessBoard board, String color) {
         DrawBoard b = new DrawBoard(board);
         b.draw();
         return null;
