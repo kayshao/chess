@@ -27,13 +27,15 @@ public class WebSocketHandler {
     AuthDataAccess authDAO;
     UserDataAccess userDAO;
     GameDataAccess gameDAO;
-    Map<Integer, Integer> gameIdMap;
+    Map<Integer, ConnectionManager> connectionMap;
+
 
     public WebSocketHandler(AuthDataAccess auth, UserDataAccess user, GameDataAccess game) {
+        System.out.println("new websocket handler");
         authDAO = auth;
         userDAO = user;
         gameDAO = game;
-        gameIdMap = new HashMap<>();
+        connectionMap = new HashMap<>();
     }
 
     private final ConnectionManager connections = new ConnectionManager();
@@ -58,6 +60,7 @@ public class WebSocketHandler {
         }
         String username = authDAO.getAuth(authToken).username();
         var loadGame = new LoadGameMessage(new ChessGame());
+        var connections = connectionMap.computeIfAbsent(gameID, k -> new ConnectionManager());
         connections.add(username, session);
         session.getRemote().sendString(new Gson().toJson(loadGame));
         var message = String.format("%s has joined the game as %s", username, getColor(gameID, username));
@@ -68,16 +71,16 @@ public class WebSocketHandler {
     private void exit(String authToken, Integer gameID) throws Exception {
         var authData = authDAO.getAuth(authToken);
         String color = getColor(gameID, authData.username());
-        connections.remove(authData.username());
+        connectionMap.get(gameID).remove(authData.username());
         var message = String.format("%s has left the game", authData.username());
         var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(authData.username(), notification);
+        connectionMap.get(gameID).broadcast(authData.username(), notification);
         if (color.equals("BOTH")) {
             gameDAO.setUsername("BLACK", new AuthData(null, null), gameID);
             gameDAO.setUsername("WHITE", new AuthData(null, null), gameID);
         }
         else {
-            gameDAO.setUsername(color, new AuthData(null, null), gameID); //TODO: implement color here
+            gameDAO.setUsername(color, new AuthData(null, null), gameID);
         }
     }
 
@@ -101,10 +104,10 @@ public class WebSocketHandler {
                 game.makeMove(move);
                 gameDAO.updateGame(gameID, game);
                 var loadGame = new LoadGameMessage(game);
-                connections.broadcast(username, loadGame);
+                connectionMap.get(gameID).broadcast(username, loadGame);
                 session.getRemote().sendString(new Gson().toJson(loadGame));
                 var moveNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, move.toString());
-                connections.broadcast(username, moveNotification);
+                connectionMap.get(gameID).broadcast(username, moveNotification);
                 if (game.getTeamTurn().equals(ChessGame.TeamColor.WHITE)) {
                     game.setTeamTurn(ChessGame.TeamColor.BLACK);
                 }
@@ -135,7 +138,7 @@ public class WebSocketHandler {
             session.getRemote().sendString(new Gson().toJson(notifySelf));
             var message = String.format("%s has resigned from the game", authData.username());
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-            connections.broadcast(authData.username(), notification);
+            connectionMap.get(gameID).broadcast(authData.username(), notification);
         } catch (Exception e) {
             sendError("error: unknown resign error", session);
         }
