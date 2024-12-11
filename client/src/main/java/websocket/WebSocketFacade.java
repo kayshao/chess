@@ -1,9 +1,6 @@
 package websocket;
 import chess.*;
 import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.glassfish.tyrus.client.ClientProperties;
-import server.Server;
 import websocket.commands.*;
 import websocket.messages.*;
 
