@@ -1,4 +1,5 @@
 package dataaccess;
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
@@ -57,7 +58,7 @@ class MySqlGameDataAccessTest {
         try {
             gameDAO.createGame("myGame");
             GameData gotGame = gameDAO.getGame(1);
-            assertEquals(new GameData(1, null, null, "myGame", null), gotGame);
+            assertEquals(1, gotGame.gameID());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

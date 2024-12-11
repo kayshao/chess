@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
@@ -46,4 +47,11 @@ public class MemoryGameDataAccess implements GameDataAccess{
         String username = authdata.username();
         games.put(gameID, game.setUser(color, username));
     }
+
+    public void updateGame(int gameID, ChessGame game) {
+        GameData oldGame = getGame(gameID);
+        oldGame.game().setBoard(game.getBoard());
+        games.put(gameID, oldGame);
+    }
+
 }

@@ -56,6 +56,7 @@ public class DatabaseManager {
             name VARCHAR(256) NOT NULL,
             black_username VARCHAR(256),
             white_username VARCHAR(256),
+            board longtext NOT NULL,
             PRIMARY KEY (id)
             )
         """,

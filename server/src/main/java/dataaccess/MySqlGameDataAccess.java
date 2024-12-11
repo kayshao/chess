@@ -1,5 +1,8 @@
 package dataaccess;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 
@@ -29,14 +32,14 @@ public class MySqlGameDataAccess implements GameDataAccess {
 
     public GameData getGame(int id) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT id, white_username, black_username, name FROM game WHERE id=?";
+            var statement = "SELECT id, white_username, black_username, name, board FROM game WHERE id=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, id);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
                         return new GameData(rs.getInt("id"), rs.getString("white_username"),
                                 rs.getString("black_username"), rs.getString("name"),
-                                null);
+                                new Gson().fromJson(rs.getString("board"), ChessGame.class));
                     }
                 }
             }
@@ -47,10 +50,11 @@ public class MySqlGameDataAccess implements GameDataAccess {
     }
 
     public int createGame(String name) throws DataAccessException {
-        var statement = "INSERT INTO game (name) VALUES (?)";
+        var statement = "INSERT INTO game (name, board) VALUES (?, ?)";
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, name);
+                ps.setString(2, new Gson().toJson(new ChessBoard()));
                 ps.executeUpdate();
                 try (var rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -105,6 +109,23 @@ public class MySqlGameDataAccess implements GameDataAccess {
                     ps.setInt(2, id);
                     rows = ps.executeUpdate();
                 }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        if (rows != 1) {
+            throw new DataAccessException("Did not update expected number of rows");
+        }
+    }
+
+
+    public void updateGame(int id, ChessGame board) throws DataAccessException {
+        int rows;
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "UPDATE game SET board = ? WHERE id = ?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, new Gson().toJson(board));
+                rows = ps.executeUpdate();
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());

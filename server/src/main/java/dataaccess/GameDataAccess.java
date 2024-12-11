@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import model.GameData;
 import model.AuthData;
 
@@ -17,4 +19,6 @@ public interface GameDataAccess {
     List<Map<String, String>> listGames() throws DataAccessException;
 
     void setUsername(String color, AuthData auth, int id) throws DataAccessException;
+
+    void updateGame(int id, ChessGame game) throws DataAccessException;
 }
