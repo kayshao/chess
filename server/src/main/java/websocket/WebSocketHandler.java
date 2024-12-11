@@ -76,14 +76,30 @@ public class WebSocketHandler {
         ChessGame game;
         try {
             game = gameDAO.getGame(gameID).game();
+            String username = authDAO.getAuth(authToken).username();
+            if ((game.getTeamTurn().equals(ChessGame.TeamColor.BLACK)
+                    && !gameDAO.getGame(gameID).blackUsername().equals(username))
+                    | game.getTeamTurn().equals(ChessGame.TeamColor.WHITE)
+                    && !gameDAO.getGame(gameID).whiteUsername().equals(username)) {
+                var message = "error: not your turn";
+                var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+                session.getRemote().sendString(new Gson().toJson(error));
+                return;
+            }
             if (game.validMoves(move.getStartPosition()).contains(move)) {
                 game.makeMove(move);
                 gameDAO.updateGame(gameID, game);
                 var loadGame = new LoadGameMessage(game);
-                connections.broadcast(authDAO.getAuth(authToken).username(), loadGame);
+                connections.broadcast(username, loadGame);
                 session.getRemote().sendString(new Gson().toJson(loadGame));
                 var moveNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, move.toString());
-                connections.broadcast(authDAO.getAuth(authToken).username(), moveNotification);
+                connections.broadcast(username, moveNotification);
+                if (game.getTeamTurn().equals(ChessGame.TeamColor.WHITE)) {
+                    game.setTeamTurn(ChessGame.TeamColor.BLACK);
+                }
+                else {
+                    game.setTeamTurn(ChessGame.TeamColor.WHITE);
+                }
             }
         } catch (Exception e) {
             var message = "error " + e;
