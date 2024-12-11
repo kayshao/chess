@@ -13,12 +13,10 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.*;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-
-import java.io.IOException;
-import java.util.Timer;
 
 
 @WebSocket
@@ -43,13 +41,16 @@ public class WebSocketHandler {
             case CONNECT -> enter(action.getAuthToken(), session);
             case LEAVE -> exit(action.getAuthToken(), action.getGameID());
             case MAKE_MOVE -> {MakeMoveCommand command = new Gson().fromJson(message, MakeMoveCommand.class);
-                move(command.getAuthToken(), command.getGameID(), command.getMove());
+                move(command.getAuthToken(), command.getGameID(), command.getMove(), session);
             }
             case RESIGN -> resign(action.getAuthToken(), action.getGameID(), session);
         }
     }
 
     private void enter(String authToken, Session session) throws Exception {
+        if (!validAuth(authToken, session)) {
+            return;
+        }
         String username = authDAO.getAuth(authToken).username();
         var loadGame = new LoadGameMessage(new ChessGame());
         connections.add(username, session);
@@ -68,7 +69,10 @@ public class WebSocketHandler {
         gameDAO.setUsername("BLACK", new AuthData(null, null), gameID);
     }
 
-    private void move(String authToken, Integer gameID, ChessMove move) {
+    private void move(String authToken, Integer gameID, ChessMove move, Session session) throws Exception {
+        if (!validAuth(authToken, session)) {
+            return;
+        }
         ChessGame game;
         try {
             game = gameDAO.getGame(gameID).game();
@@ -82,6 +86,9 @@ public class WebSocketHandler {
 
     }
     private void resign(String authToken, Integer gameID, Session session) throws Exception {
+        if (!validAuth(authToken, session)) {
+            return;
+        }
         ChessGame game;
         try {
             game = gameDAO.getGame(gameID).game();
@@ -98,5 +105,25 @@ public class WebSocketHandler {
             var error = new NotificationMessage(ServerMessage.ServerMessageType.ERROR, message);
             session.getRemote().sendString(new Gson().toJson(error));
         }
+    }
+    private boolean validAuth(String authToken, Session session) throws Exception {
+        System.out.println("validating auth " + authToken);
+        try {
+            var auth = authDAO.getAuth(authToken);
+            if (auth == null) {
+                System.out.println("no auth");
+                String message = "error: invalid auth";
+                var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+                session.getRemote().sendString(new Gson().toJson(error));
+                return false;
+            }
+        } catch (DataAccessException e) {
+            System.out.println("exception");
+            String message = "error: invalid auth";
+            var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            session.getRemote().sendString(new Gson().toJson(error));
+            return false;
+        }
+        return true;
     }
 }
