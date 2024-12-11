@@ -24,7 +24,7 @@ public class GameplayUI implements NotificationHandler {
         this.color = color;
         this.url = url;
         this.auth = authToken;
-        this.id = gameID;
+        this.id = gameID; // client game id
         this.setUp();
     }
     public void setUp() {

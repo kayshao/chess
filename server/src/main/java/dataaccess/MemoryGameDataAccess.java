@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MemoryGameDataAccess implements GameDataAccess{
-    private int gameID = 1;
+    private int gameID = 100; //TODO change this
     private final HashMap<Integer, GameData> games = new HashMap<>();
 
     public void clear() {

@@ -18,17 +18,22 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @WebSocket
 public class WebSocketHandler {
     AuthDataAccess authDAO;
     UserDataAccess userDAO;
     GameDataAccess gameDAO;
+    Map<Integer, Integer> gameIdMap;
 
     public WebSocketHandler(AuthDataAccess auth, UserDataAccess user, GameDataAccess game) {
         authDAO = auth;
         userDAO = user;
         gameDAO = game;
+        gameIdMap = new HashMap<>();
     }
 
     private final ConnectionManager connections = new ConnectionManager();
@@ -48,7 +53,7 @@ public class WebSocketHandler {
     }
 
     private void enter(String authToken, Integer gameID, Session session) throws Exception {
-        if (!validAuth(authToken, session)) {
+        if (!validAuth(authToken, session) | !validID(gameID, session)) {
             return;
         }
         String username = authDAO.getAuth(authToken).username();
@@ -77,7 +82,8 @@ public class WebSocketHandler {
     }
 
     private void move(String authToken, Integer gameID, ChessMove move, Session session) throws Exception {
-        if (!validAuth(authToken, session) | observe(authToken, gameID, session) | !active(gameID, session)) {
+        if (!validAuth(authToken, session) | observe(authToken, gameID, session) | !active(gameID, session)
+                | !validID(gameID, session)) {
             return;
         }
         ChessGame game;
@@ -150,6 +156,20 @@ public class WebSocketHandler {
         }
         return true;
     }
+    private boolean validID(Integer gameID, Session session) throws Exception {
+        System.out.println("validatind id " + gameID);
+        try {
+            var game = gameDAO.getGame(gameID);
+            if (game == null) {
+                sendError("error: invalid gameID", session);
+                return false;
+            }
+        } catch (DataAccessException e) {
+            sendError("error: invalid gameID", session);
+            return false;
+        }
+        return true;
+    }
     private boolean observe(String authToken, Integer gameID, Session session) throws Exception {
         var game = gameDAO.getGame(gameID);
         String username = authDAO.getAuth(authToken).username();
@@ -186,7 +206,7 @@ public class WebSocketHandler {
                 return "BLACK";
             }
         }
-        return "NONE";
+        return "OBSERVER";
     }
     private void sendError(String msg, Session session) throws Exception {
         var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, msg);
