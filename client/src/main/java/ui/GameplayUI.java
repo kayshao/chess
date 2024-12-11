@@ -1,6 +1,8 @@
 package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
@@ -55,18 +57,32 @@ public class GameplayUI implements NotificationHandler {
     public String drawBoard(ChessBoard board, String color) {
         DrawBoard b = new DrawBoard(board);
         b.draw();
-        return null;
+        return "board drawn"; //TODO: fix this
     }
     public String highlightMoves() {
         return null;
     }
 
     public String makeMove(String... params) {
-        return null;
+        if (params.length == 2 | params.length == 3) {
+            try {
+                int startCol = params[0].charAt(0) - 'a' + 1;
+                int startRow = Character.getNumericValue(params[0].charAt(1));
+                int endCol = params[1].charAt(0) - 'a' + 1;
+                int endRow = Character.getNumericValue(params[1].charAt(1));
+                var type = params[2].toUpperCase(); //TODO: implement piece promotion
+                webSocket.move(auth, id, new ChessMove(new ChessPosition(startRow, startCol), new ChessPosition(endCol, endRow), null));
+                return color + " " + id + " \n";
+            } catch (Exception e) {
+                return (SET_TEXT_COLOR_RED + "Error: expected <game number> <color>\n");
+            }
+        }
+        return "move made"; //todo: fix this
     }
 
     public String resign() {
-        return null;
+        webSocket.resign(auth, id);
+        return "that worked"; //TODO: change this, returning null causes exception in while loop
     }
 
     public String leave() throws Exception {
@@ -94,8 +110,13 @@ public class GameplayUI implements NotificationHandler {
     }
     public void updateGame(ChessGame game) {
         System.out.println("Updating game\n");
+        drawBoard(game.board, color);
     }
-    public void showNotification(String msg) {}
-    public void showError(String msg) {}
+    public void showNotification(String msg) {
+        System.out.println(SET_TEXT_COLOR_RED + msg + "\n");
+    }
+    public void showError(String msg) {
+        System.out.println(SET_TEXT_COLOR_RED + msg + "\n");
+    }
 
 }

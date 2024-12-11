@@ -85,7 +85,7 @@ public class Client {
             String line = scanner.nextLine();
             try {
                 result = gameplayUI.eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                // TODO: sometimes prints "null" System.out.print(SET_TEXT_COLOR_BLUE + result);
 
             } catch (Throwable e) {
                 var msg = e.toString();

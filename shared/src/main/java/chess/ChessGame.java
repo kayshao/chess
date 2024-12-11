@@ -12,10 +12,12 @@ import java.util.*;
 public class ChessGame {
     private TeamColor turn;
     public ChessBoard board = new ChessBoard();
+    public boolean active;
 
     public ChessGame() {
         board.resetBoard();
         this.turn = TeamColor.WHITE;
+        this.active = true;
     }
 
     /**

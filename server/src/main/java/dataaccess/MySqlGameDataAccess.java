@@ -54,7 +54,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, name);
-                ps.setString(2, new Gson().toJson(new ChessBoard()));
+                ps.setString(2, new Gson().toJson(new ChessGame()));
                 ps.executeUpdate();
                 try (var rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -63,7 +63,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException("creategame" + e.getMessage()); //TODO: remove
         }
         throw new DataAccessException("Did not return anything");
     }
@@ -125,6 +125,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
             var statement = "UPDATE game SET board = ? WHERE id = ?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, new Gson().toJson(board));
+                ps.setInt(2, id);
                 rows = ps.executeUpdate();
             }
         } catch (SQLException e) {

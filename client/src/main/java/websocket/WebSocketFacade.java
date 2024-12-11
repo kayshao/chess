@@ -1,5 +1,5 @@
 package websocket;
-import chess.ChessGame;
+import chess.*;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.glassfish.tyrus.client.ClientProperties;
@@ -53,6 +53,14 @@ public class WebSocketFacade extends Endpoint {
             ChessGame game = loadGameMessage.getGame();
             notificationHandler.updateGame(game);
         }
+        if (type == ServerMessage.ServerMessageType.ERROR) {
+            ErrorMessage error = new Gson().fromJson(msg, ErrorMessage.class);
+            notificationHandler.showError(error.getMessage());
+        }
+        if (type == ServerMessage.ServerMessageType.NOTIFICATION) {
+            NotificationMessage notification = new Gson().fromJson(msg, NotificationMessage.class);
+            notificationHandler.showNotification(notification.getMessage());
+        }
             // case NOTIFICATION -> notificationHandler.showNotification(message.getMessage());
             // case ERROR -> notificationHandler.showError(message.getErrorMessage());
     }
@@ -80,6 +88,11 @@ public class WebSocketFacade extends Endpoint {
             throw new Exception(e.getMessage());
         }
     }
+    public void move(String authToken, Integer gameID, ChessMove move) {
+        var action = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
+        sendCommand(action);
+    }
+
     public void disconnect(String authToken, Integer gameID) throws Exception {
         try {
             var action = new LeaveCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
@@ -87,5 +100,12 @@ public class WebSocketFacade extends Endpoint {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+    public void resign(String authToken, Integer gameID) {
+        var action = new ResignCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        sendCommand(action);
+    }
+    public boolean validateMove(ChessGame game, ChessMove move) {
+        return game.validMoves(move.getStartPosition()).contains(move);
     }
 }
