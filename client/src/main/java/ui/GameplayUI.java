@@ -56,7 +56,7 @@ public class GameplayUI implements NotificationHandler {
     }
     public String drawBoard(ChessBoard board, String color) {
         DrawBoard b = new DrawBoard(board);
-        b.draw();
+        b.draw(color);
         return "board drawn"; //TODO: fix this
     }
     public String highlightMoves() {

@@ -32,7 +32,7 @@ public class PreLoginUI {
     public String register(String... params) throws Exception {
         if (params.length == 3) {
             RegisterResult result = facade.register(params[0], params[1], params[2]);
-            System.out.println("Account created");
+            System.out.println(SET_TEXT_COLOR_BLUE + "Account created");
             return "a " + result.authToken();
         }
         throw new Exception("Invalid registration, expected <username> <password> <email>");

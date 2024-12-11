@@ -40,10 +40,10 @@ public class WebSocketHandler {
         switch (action.getCommandType()) {
             case CONNECT -> enter(action.getAuthToken(), session);
             case LEAVE -> exit(action.getAuthToken(), action.getGameID());
+            case RESIGN -> resign(action.getAuthToken(), action.getGameID(), session);
             case MAKE_MOVE -> {MakeMoveCommand command = new Gson().fromJson(message, MakeMoveCommand.class);
                 move(command.getAuthToken(), command.getGameID(), command.getMove(), session);
             }
-            case RESIGN -> resign(action.getAuthToken(), action.getGameID(), session);
         }
     }
 
@@ -81,9 +81,7 @@ public class WebSocketHandler {
                     && !gameDAO.getGame(gameID).blackUsername().equals(username))
                     | game.getTeamTurn().equals(ChessGame.TeamColor.WHITE)
                     && !gameDAO.getGame(gameID).whiteUsername().equals(username)) {
-                var message = "error: not your turn";
-                var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-                session.getRemote().sendString(new Gson().toJson(error));
+                sendError("error: not your turn", session);
                 return;
             }
             if (game.validMoves(move.getStartPosition()).contains(move)) {
@@ -101,10 +99,12 @@ public class WebSocketHandler {
                     game.setTeamTurn(ChessGame.TeamColor.WHITE);
                 }
             }
+            else {
+                sendError("error: invalid move", session);
+                }
+
         } catch (Exception e) {
-            var message = "error " + e;
-            var error = new NotificationMessage(ServerMessage.ServerMessageType.ERROR, message);
-            session.getRemote().sendString(new Gson().toJson(error));
+            sendError("error: unknown move error", session);
         }
 
     }
@@ -127,9 +127,7 @@ public class WebSocketHandler {
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authData.username(), notification);
         } catch (Exception e) {
-            var message = "error " + e;
-            var error = new NotificationMessage(ServerMessage.ServerMessageType.ERROR, message);
-            session.getRemote().sendString(new Gson().toJson(error));
+            sendError("error: unknown resign error", session);
         }
     }
     private boolean validAuth(String authToken, Session session) throws Exception {
@@ -138,16 +136,12 @@ public class WebSocketHandler {
             var auth = authDAO.getAuth(authToken);
             if (auth == null) {
                 System.out.println("no auth");
-                String message = "error: invalid auth";
-                var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-                session.getRemote().sendString(new Gson().toJson(error));
+                sendError("error: invalid auth", session);
                 return false;
             }
         } catch (DataAccessException e) {
             System.out.println("exception");
-            String message = "error: invalid auth";
-            var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            session.getRemote().sendString(new Gson().toJson(error));
+            sendError("error: invalid auth", session);
             return false;
         }
         return true;
@@ -155,12 +149,16 @@ public class WebSocketHandler {
     private boolean observe(String authToken, Integer gameID, Session session) throws Exception {
         var game = gameDAO.getGame(gameID);
         String username = authDAO.getAuth(authToken).username();
-        if (!(game.blackUsername().equals(username) | game.whiteUsername().equals(username))) {
-            String message = "error: invalid request for observer";
-            var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            session.getRemote().sendString(new Gson().toJson(error));
+        String bUser = game.blackUsername();
+        String wUser = game.whiteUsername();
+        if ((bUser == null | !bUser.equals(username)) && (wUser == null | !wUser.equals(username))) {
+            sendError("error: invalid request for observer", session);
             return true;
         }
         return false;
+    }
+    private void sendError(String msg, Session session) throws Exception {
+        var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, msg);
+        session.getRemote().sendString(new Gson().toJson(error));
     }
 }

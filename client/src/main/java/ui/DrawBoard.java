@@ -28,19 +28,25 @@ public class DrawBoard {
         this.board = board;
     }
 
-    public void draw() {
+    public void draw(String color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         String[] headerForward = new String[] {"a", "b", "c", "d", "e", "f", "g", "h"};
         String[] headerBackward = new String[] {"h", "g", "f", "e", "d", "c", "b", "a"};
         out.print(ERASE_SCREEN);
+        if (color.equals("black")) {
+            drawHeaders(out, headerBackward);
+            drawChessBoardForward(out);
+            drawHeaders(out, headerBackward);
+            out.println();
+        }
+        else {
+            drawHeaders(out, headerForward);
+            drawChessBoardBackward(out);
+            drawHeaders(out, headerForward);
+            out.println();
+        }
 
-        drawHeaders(out, headerForward);
-        drawChessBoardForward(out);
-        drawHeaders(out, headerForward);
-        out.println();
-        drawHeaders(out, headerBackward);
-        drawChessBoardBackward(out);
-        drawHeaders(out, headerBackward);
+
     }
     private void drawHeaders(PrintStream out, String[] headers) {
         out.print(SET_BG_COLOR_DARK_GREY);
