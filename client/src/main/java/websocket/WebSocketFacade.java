@@ -102,7 +102,4 @@ public class WebSocketFacade extends Endpoint {
         var action = new ResignCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
         sendCommand(action);
     }
-    public boolean validateMove(ChessGame game, ChessMove move) {
-        return game.validMoves(move.getStartPosition()).contains(move);
-    }
 }

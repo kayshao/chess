@@ -14,7 +14,7 @@ public class DrawBoard {
     private static final int BOARD_SIZE_SQUARES = 8;
     private static final int SQUARE_SIZE_CHARS = 1;
     private final ChessBoard board;
-    private static final Map<ChessPiece.PieceType, String> pieceMap = Map.of(
+    private static final Map<ChessPiece.PieceType, String> PIECE_MAP = Map.of(
             ChessPiece.PieceType.KING, "K",
             ChessPiece.PieceType.QUEEN, "Q",
             ChessPiece.PieceType.ROOK, "R",
@@ -103,16 +103,9 @@ public class DrawBoard {
     }
 
     private static void drawSquare(PrintStream out, ChessBoard board, int row, int col, boolean back) {
-        if (back) {
-            String piece = getPieceSymbol(board, row, col);
-            for (int i = 0; i < SQUARE_SIZE_CHARS; i++) {
-                out.print(" " + piece + " ");
-            }
-        } else {
-            String piece = getPieceSymbol(board, row, col);
-            for (int i = 0; i < SQUARE_SIZE_CHARS; i++) {
-                out.print(" " + piece + " ");
-            }
+        String piece = getPieceSymbol(board, row, col);
+        for (int i = 0; i < SQUARE_SIZE_CHARS; i++) {
+            out.print(" " + piece + " ");
         }
     }
 
@@ -122,10 +115,10 @@ public class DrawBoard {
             return " ";
         }
         else if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            return SET_TEXT_COLOR_WHITE + pieceMap.get(piece.getPieceType());
+            return SET_TEXT_COLOR_WHITE + PIECE_MAP.get(piece.getPieceType());
         }
         else {
-            return SET_TEXT_COLOR_BLACK + pieceMap.get(piece.getPieceType());
+            return SET_TEXT_COLOR_BLACK + PIECE_MAP.get(piece.getPieceType());
         }
     }
 
