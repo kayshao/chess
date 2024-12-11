@@ -70,7 +70,7 @@ public class WebSocketHandler {
     }
 
     private void move(String authToken, Integer gameID, ChessMove move, Session session) throws Exception {
-        if (!validAuth(authToken, session) | observe(authToken, gameID, session)) {
+        if (!validAuth(authToken, session) | observe(authToken, gameID, session) | !active(gameID, session)) {
             return;
         }
         ChessGame game;
@@ -109,10 +109,7 @@ public class WebSocketHandler {
 
     }
     private void resign(String authToken, Integer gameID, Session session) throws Exception {
-        if (!validAuth(authToken, session)) {
-            return;
-        }
-        if (observe(authToken, gameID, session)) {
+        if (!validAuth(authToken, session) | observe(authToken, gameID, session) | !active(gameID, session)) {
             return;
         }
         ChessGame game;
@@ -156,6 +153,13 @@ public class WebSocketHandler {
             return true;
         }
         return false;
+    }
+    private boolean active(Integer gameID, Session session) throws Exception {
+        var game = gameDAO.getGame(gameID).game();
+        if (!game.active) {
+            sendError("error: game has terminated", session);
+        }
+        return game.active;
     }
     private void sendError(String msg, Session session) throws Exception {
         var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, msg);

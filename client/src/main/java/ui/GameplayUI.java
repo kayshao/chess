@@ -110,10 +110,11 @@ public class GameplayUI implements NotificationHandler {
     }
     public void updateGame(ChessGame game) {
         System.out.println("Updating game\n");
+        this.game = game;
         drawBoard(game.board, color);
     }
     public void showNotification(String msg) {
-        System.out.println(SET_TEXT_COLOR_RED + msg + "\n");
+        System.out.println(SET_TEXT_COLOR_YELLOW + msg + "\n");
     }
     public void showError(String msg) {
         System.out.println(SET_TEXT_COLOR_RED + msg + "\n");
