@@ -70,10 +70,7 @@ public class WebSocketHandler {
     }
 
     private void move(String authToken, Integer gameID, ChessMove move, Session session) throws Exception {
-        if (!validAuth(authToken, session)) {
-            return;
-        }
-        if (observe(authToken, gameID, session)) {
+        if (!validAuth(authToken, session) | observe(authToken, gameID, session)) {
             return;
         }
         ChessGame game;
@@ -81,10 +78,17 @@ public class WebSocketHandler {
             game = gameDAO.getGame(gameID).game();
             if (game.validMoves(move.getStartPosition()).contains(move)) {
                 game.makeMove(move);
-                // TODO: implement server update of game
+                gameDAO.updateGame(gameID, game);
+                var loadGame = new LoadGameMessage(game);
+                connections.broadcast(authDAO.getAuth(authToken).username(), loadGame);
+                session.getRemote().sendString(new Gson().toJson(loadGame));
+                var moveNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, move.toString());
+                connections.broadcast(authDAO.getAuth(authToken).username(), moveNotification);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e); // TODO: error handling
+            var message = "error " + e;
+            var error = new NotificationMessage(ServerMessage.ServerMessageType.ERROR, message);
+            session.getRemote().sendString(new Gson().toJson(error));
         }
 
     }
