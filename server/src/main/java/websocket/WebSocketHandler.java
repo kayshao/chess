@@ -73,6 +73,9 @@ public class WebSocketHandler {
         if (!validAuth(authToken, session)) {
             return;
         }
+        if (observe(authToken, gameID, session)) {
+            return;
+        }
         ChessGame game;
         try {
             game = gameDAO.getGame(gameID).game();
@@ -87,6 +90,9 @@ public class WebSocketHandler {
     }
     private void resign(String authToken, Integer gameID, Session session) throws Exception {
         if (!validAuth(authToken, session)) {
+            return;
+        }
+        if (observe(authToken, gameID, session)) {
             return;
         }
         ChessGame game;
@@ -125,5 +131,16 @@ public class WebSocketHandler {
             return false;
         }
         return true;
+    }
+    private boolean observe(String authToken, Integer gameID, Session session) throws Exception {
+        var game = gameDAO.getGame(gameID);
+        String username = authDAO.getAuth(authToken).username();
+        if (!(game.blackUsername().equals(username) | game.whiteUsername().equals(username))) {
+            String message = "error: invalid request for observer";
+            var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            session.getRemote().sendString(new Gson().toJson(error));
+            return true;
+        }
+        return false;
     }
 }
