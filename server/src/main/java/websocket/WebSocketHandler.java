@@ -38,7 +38,7 @@ public class WebSocketHandler {
         System.out.println("receiving message");
         UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
         switch (action.getCommandType()) {
-            case CONNECT -> enter(action.getAuthToken(), session);
+            case CONNECT -> enter(action.getAuthToken(), action.getGameID(), session);
             case LEAVE -> exit(action.getAuthToken(), action.getGameID());
             case RESIGN -> resign(action.getAuthToken(), action.getGameID(), session);
             case MAKE_MOVE -> {MakeMoveCommand command = new Gson().fromJson(message, MakeMoveCommand.class);
@@ -47,7 +47,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void enter(String authToken, Session session) throws Exception {
+    private void enter(String authToken, Integer gameID, Session session) throws Exception {
         if (!validAuth(authToken, session)) {
             return;
         }
@@ -55,18 +55,25 @@ public class WebSocketHandler {
         var loadGame = new LoadGameMessage(new ChessGame());
         connections.add(username, session);
         session.getRemote().sendString(new Gson().toJson(loadGame));
-        var message = String.format("%s has joined the game", username);
+        var message = String.format("%s has joined the game as %s", username, getColor(gameID, username));
         var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(username, notification);
     }
 
     private void exit(String authToken, Integer gameID) throws Exception {
         var authData = authDAO.getAuth(authToken);
+        String color = getColor(gameID, authData.username());
         connections.remove(authData.username());
         var message = String.format("%s has left the game", authData.username());
         var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(authData.username(), notification);
-        gameDAO.setUsername("BLACK", new AuthData(null, null), gameID);
+        if (color.equals("BOTH")) {
+            gameDAO.setUsername("BLACK", new AuthData(null, null), gameID);
+            gameDAO.setUsername("WHITE", new AuthData(null, null), gameID);
+        }
+        else {
+            gameDAO.setUsername(color, new AuthData(null, null), gameID); //TODO: implement color here
+        }
     }
 
     private void move(String authToken, Integer gameID, ChessMove move, Session session) throws Exception {
@@ -160,6 +167,26 @@ public class WebSocketHandler {
             sendError("error: game has terminated", session);
         }
         return game.active;
+    }
+    private String getColor(Integer gameID, String username) throws Exception {
+        var game = gameDAO.getGame(gameID);
+        if (game.whiteUsername() != null) {
+            if (game.blackUsername() != null) {
+                if (game.whiteUsername().equals(username) && game.blackUsername().equals(username)) {
+                    return "BOTH";
+                }
+                else if (game.blackUsername().equals(username)) {
+                    return "BLACK";
+                }
+            } else if (game.whiteUsername().equals(username)) {
+                return "WHITE";
+            }
+        } else if (game.blackUsername() != null) {
+            if (game.blackUsername().equals(username)) {
+                return "BLACK";
+            }
+        }
+        return "NONE";
     }
     private void sendError(String msg, Session session) throws Exception {
         var error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, msg);
